@@ -29,17 +29,20 @@ using namespace std;
 *    Black is connected to 0Vdc
 *	Red and black will not (cannot?) be declared and is for now just for the electronics.
 *
-*    Green is connected to pin3
-*    Orange is connected to pin4
+*    Green is connected to pin2
+*    Orange is connected to pin3
+*    White is connected to pin4
 *    Yellow is conneced to pin17
 *    Blue is connected to pin27
+*    Red is connected to pin22
 */
 
 #define GRN 2
 #define ORG 3
+#define WHT 4
 #define YEL 17
 #define BLU 27
-
+#define RED 22
 
 /*
 *  Defining the different kinds of output, eg.: HIGH, LOW
@@ -53,8 +56,13 @@ using namespace std;
 *  Different vars as value-holders:
 */
 
+int toggle_on;
 int pwm_step;
 int blue_led_on;
+int test_mode_control;
+int test_mode = 1;
+int kill_switch_control;
+bool kill_switch = false;
 
 /*
 *  Main function:
@@ -68,7 +76,7 @@ int main() {
 *  Could be used for something wore usefull
 */
 
-	cout << "Hello v2" << endl;
+	cout << "Hello" << endl;
 
 /*
 *  This tests if it is possible to initialise the GPIO library
@@ -80,22 +88,79 @@ int main() {
 *  Now setting the in- and outputs used in the code
 */
 
-	gpioSetMode(YEL, PI_OUTPUT); // Sets pin17 as output (3.3v), for blinking LED
-	gpioSetMode(GRN, PI_OUTPUT); // pin3 will be used for PWM-tests
-	gpioSetMode(ORG, PI_INPUT); // pin4 has a button for input-tests
-	gpioSetMode(BLU, PI_OUTPUT); // pin 27 will be output feedback for the input-tests
+	gpioSetMode(GRN, PI_OUTPUT); // pin2 yellow diode (blinky)
+	gpioSetMode(ORG, PI_OUTPUT); // pin3 red diode (PWM)
+	gpioSetMode(WHT, PI_OUTPUT); // pin4 blue diode (button diode)
+	gpioSetMode(YEL, PI_INPUT); // pin17 physical switch (toggle)
+        gpioSetMode(BLU, PI_INPUT); // pin27 blue "wire-switch" (test_mode control)
+        gpioSetMode(RED, PI_INPUT); // pin22 red "wire-switch" (kill switch)
+
+/*
+*  This loop will "control" the program, in that sense that its looping until the "kill switch" is pressed.
+*  The loop will start with a case where it's doin nothin, until the switch at the green wire is pressed.
+*  Then another case, with the test-sequence will be used instead, until the kill switch is pressed.
+*/
+
+/* TEMP INPUTTEST
+cout << "YEL is: " << gpioRead(YEL) << endl;
+cout << "BLU is: " << gpioRead(BLU) << endl;
+cout << "RED is: " << gpioRead(RED) << endl;
+*/
+
+while (!kill_switch){
+
+    test_mode_control = gpioRead(BLU);
+
+    if (test_mode_control == 0){
+
+        test_mode = 2;
+
+    } else if (test_mode_control == 1){
+
+        // Do nothing
+	cout << "waiting state" << endl;
+	test_mode = 1;
+
+    } else {
+
+	cout << "failure with test_mode_control, terminating sequence" << endl;
+	kill_switch = true;
+	break;
+
+    }
+
+    cout << "test_mode_control is: " << test_mode_control << endl;
+    cout << "test_mode is: " << test_mode << endl;
+    gpioDelay(1000000);
+
+    switch(test_mode){
+
+        case 1 :
+
+		//Do nothing
+		cout << "Case 1" << endl;
+		gpioDelay(1000000);
+		break;
+
+	case 2 :
+
+		cout << "Case 2" << endl;
+		gpioDelay(1000000);
+
+		//Start test-sequence
 
 /*
 *  This loop should run 10 times.
 */
 
-	for(int i; i < 10; i++){
+		int i = 0;
+		for(i; i < 10; i++){
 
 /*
 *  First a counter for traverse-nr of loop:
 */
 
-		cout << "Loop-count: " << i +1 << endl;
+			cout << "Loop-count: " << i +1 << endl;
 
 /*
 *  This part should set the yellow wire (YEL) as HIGH, wait half a second (500000 uS),
@@ -104,10 +169,10 @@ int main() {
 */
 
 
-		gpioWrite(GRN, HIGH);
-		gpioDelay(500000);
-		gpioWrite(GRN, LOW);
-		gpioDelay(500000);
+			gpioWrite(GRN, HIGH);
+			gpioDelay(500000);
+			gpioWrite(GRN, LOW);
+			gpioDelay(500000);
 
 /*
 *  This part of the loop will read the input of the orange wire, set the var blue_led_on to 1 if
@@ -116,24 +181,25 @@ int main() {
 *  It toggles between keeping the values if button is not pressed.
 */
 
-		cout << "GPIO on orange wire is: " << gpioRead(ORG) << endl;
+			toggle_on = gpioRead(YEL);
+			cout << "gpioRead on YEL wire (toggle) is: " << toggle_on << endl;
 
-		if (blue_led_on == 0 & gpioRead(ORG) == 0){
+			if (blue_led_on == 0 & toggle_on == 0){
 
-			blue_led_on = 1;
+				blue_led_on = 1;
 
-		} else if (blue_led_on == 1 & gpioRead(ORG) == 0) {
+			} else if (blue_led_on == 1 & toggle_on == 0) {
 
-			blue_led_on = 0;
+				blue_led_on = 0;
 
-		} else {
+			} else {
 
 			//Do nothing
 
-		}
+			}
 
-		cout << "blue_led_on is: " << blue_led_on << endl;
-		gpioWrite(BLU, blue_led_on);
+			cout << "blue_led_on is: " << blue_led_on << endl;
+			gpioWrite(WHT, blue_led_on);
 
 /*
 *  This part of the loop will "pulse" the output on the yellow wire via PWM.
@@ -142,23 +208,42 @@ int main() {
 *  live without the last 5 values for the range.
 */
 
-		if (i < 5){
+			if (i < 5){
 
-			pwm_step = 0 + i * 50; // calculates and sets the dutyc. value for the PWM
+				pwm_step = 0 + i * 50; // calculates and sets the dutyc. value for the PWM
 
-		} else if (i > 4) {
+			} else if (i > 4) {
 
-			pwm_step = 250 - (i-4) * 50;
+				pwm_step = 250 - (i-4) * 50;
 
-		}
+			}
 
 // clutter turned of
 //		cout << "The value for the dutycaycle is: " << pwm_step << endl;
 
-		gpioPWM(YEL, pwm_step);
+			gpioPWM(ORG, pwm_step);
 
 
-	} // End of 10s-loop
+		} // End of 10s-loop
+
+		break;
+
+	} //End of case switch
+
+    kill_switch_control = gpioRead(RED);
+
+    cout << "red_wire is: " << kill_switch_control << endl;
+
+    if (kill_switch_control == 0) {
+
+	kill_switch = true;
+
+    } else {
+
+	//Do nothing
+    }
+
+    } //End of while loop
 
 
 /*
