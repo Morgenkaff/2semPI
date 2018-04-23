@@ -4,10 +4,6 @@
  
  The code should have sufficient comments to grasp the in and outs.
  
- Naming should follow the "Google C++ Style Guide".
- 
- Documentation is underway.
- 
 <pre>
   _________________________________
  |        PINS ON HARDWARE:        |
@@ -36,4 +32,12 @@
                  ¯¯¯¯¯
  
  ('--' indicates that pin is not used/connected on hardware.)
+ (step_# is used either by the stepper motor OR the dc motor. The dc only uses step_1 and step_2. Better names could be found..)
 </pre>
+ 
+ ## TODO:
+ 
+- Naming should follow the "Google C++ Style Guide".
+- All "#define's" for the pins should be replaced with vars of type int.
+- Class diagram and documentation of classes.
+- ...
