@@ -35,24 +35,52 @@
  *   Purple is connected to pin19
  *   Grey is connected to pin13
  *   White is connected to pin6
- *   
+ * 
+ * ___________________________________
+ *        PINS ON HARDWARE:
+ * 
+ *                 _____
+ *            3.3v|-- --|--
+ *    open_end_hid| 2 --|--
+ *  closed_end_hid| 3 --|GND
+ *         kill_sw| 4 14|--
+ *             GND|-- 15|--
+ * closed_grip_hid|17 18|--
+ *   open_grip_hid|27 --|--
+ *     open_end_sw|22 23|green_led
+ *            3.3v|-- 24|red_led
+ *   closed_end_sw|10 --|GND
+ *   close_grip_ur| 9 25|blue_led
+ *    open_grip_ur|11  8|yellow_led
+ *             GND|--  7|--
+ *              --|-- --|--
+ *          step_4| 5 --|GND
+ *          step_3| 6 12|--
+ *          step_2|13 --|GND
+ *          step_1|19 16|--
+ *   grip_ready_ur|26 20|--
+ *             GND|-- 21|--
+ *                 ¯¯¯¯¯
+ * 
+ * (Chars '--' indicates pin is not used/connected on hardware.)
+ * 
  */
 
 // HID/BOX IOs
-#define KILL_SW 14 // The red switch on front
-#define GREEN_LED 6 // Green bi-led
-#define RED_LED 13 // Red bi-led
-#define IS_OPENING 19 // Yellow LED on front
-#define IS_CLOSING 26 // Blue LED on front
-#define HID_CLOSED_END 2 // HID version of CLOSED_END in KLO IO
-#define HID_OPEN_END 3 // HID version of CLOSED_END in KLO IO
-#define HID_CLOSE_KLO 17 // HID version of CLOSE_KLO in UR IO
-#define HID_OPEN_KLO 27 // HID version of OPEN_KLO in UR IO
+#define KILL_SW 4 // The red switch on front
+#define GREEN_LED 23 // Green bi-led
+#define RED_LED 24 // Red bi-led
+#define IS_OPENING 25 // Blue LED on front
+#define IS_CLOSING 8 // Yellow LED on front
+#define OPEN_END_HID 2 // HID version of CLOSED_END in KLO IO
+#define CLOSE_END_HID 3 // HID version of CLOSED_END in KLO IO
+#define OPEN_GRIP_HID 17 // HID version of CLOSE_KLO in UR IO
+#define CLOSE_GRIP_HID 27 // HID version of OPEN_KLO in UR IO
 
 // UR IOs
-#define OPEN_KLO 23 // Signal from UR to open the gripper (hardwaired to left white button on front)
-#define CLOSE_KLO 24 // Signal from UR to open the gripper (hardwaired to left white button on front)
-#define KLO_READY 25 // The connectiuon used to send "ready-signalk" to UR
+#define OPEN_GRIP_UR 23 // Signal from UR to open the gripper (hardwaired to left white button on front)
+#define CLOSE_GRIP_UR 24 // Signal from UR to open the gripper (hardwaired to left white button on front)
+#define GRIP_READY_UR 25 // The connectiuon used to send "ready-signalk" to UR
 
 // KLO IO
 #define CLOSED_END 15 // This input gets HIGH when the "closed-switch" is pressed
