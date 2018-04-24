@@ -1,0 +1,94 @@
+ 
+
+
+void Stepper::_runStepper(int speed, bool direction){
+    
+    _speed = speed;
+    _direction = direction;
+    
+    int delay_time = 5000 - (_speed * (4300/255));
+    step_case_ = 1;
+    
+    while (_speed != 0) {
+        _set_step(step_case_);
+        _stepTraverse();
+        _loopCase();
+        gpioDelay(delay_time);
+    }
+}
+
+void Stepper::_set_step(int& step_case){
+        switch(step_case){
+            case 0:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, HIGH);
+                break; 
+            case 1:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, HIGH);
+                gpioWrite(STEP_4, HIGH);
+                break; 
+            case 2:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, HIGH);
+                gpioWrite(STEP_4, LOW);
+                break; 
+            case 3:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, HIGH);
+                gpioWrite(STEP_3, HIGH);
+                gpioWrite(STEP_4, LOW);
+                break; 
+            case 4:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, HIGH);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, LOW);
+                break; 
+            case 5:
+                gpioWrite(STEP_1, HIGH); 
+                gpioWrite(STEP_2, HIGH);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, LOW);
+                break; 
+            case 6:
+                gpioWrite(STEP_1, HIGH); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, LOW);
+                break; 
+            case 7:
+                gpioWrite(STEP_1, HIGH); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, HIGH);
+                break; 
+            default:
+                gpioWrite(STEP_1, LOW); 
+                gpioWrite(STEP_2, LOW);
+                gpioWrite(STEP_3, LOW);
+                gpioWrite(STEP_4, LOW);
+                break; 
+        }
+}
+
+/*
+ * This function traverse the step_case, depending on the direction.
+ */
+void Stepper::_stepTraverse(){
+    if(_direction==1){ step_case_++;}
+    if(_direction==0){ step_case_--;}
+}
+
+/*
+ * This function changes the var step_case, securing that the case switch
+ * will "loop around".
+ */
+void Stepper::_loopCase(){    
+    if(step_case_>7){step_case_=0;}
+    if(step_case_<0){step_case_=7;}
+}
