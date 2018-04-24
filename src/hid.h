@@ -6,7 +6,7 @@
 class Hid {
 private: // Private vars
     
-    // Ints setting the pins used for easier reading:
+// Ints setting the pins used for easier reading:
     
     // Inputs:
     int kill_sw_; // The red switch on front
@@ -24,24 +24,19 @@ private: // Private vars
     bool bi_led_state_; // Holds state (colour of bi-led): true = green, false = red
                         // Used to ensure that they are not on both at the same time.
     bool hid_grip_ends_state_; // Holds state for end-switches on box. (Used for testing.)
-                               // True = on, false = off
-    int rate_balance_; // Used to tune the rate of the blinking of the LEDs
+    
     
 public: // Public functions (+constructor)
     Hid(); // Simple constructor. Nothing happens.
-                
-    // The next 4 functions (set*Led) uses ints for setting the rate of blinking.
-    // The rate of blinking is set as:
-    // 0: led is off
-    // 1: slow blink (250ms on/750ms off)
-    // 2: medium blink (500ms on/500ms off)
-    // 3: fast blink (750ms on/250ms off)
-    // 4: Constant on
+    ~Hid(); // Destructor should turn off leds and switches
     
-    void setGreenLed(int); //See above
-    void setRedLed(int); //See above
-    void setOpenLed(int); //See above
-    void setCloseLed(int); //See above
+    
+    // Setting the LEDs:
+    
+    void setGreenLed(bool); //Sets led. 1 = on, 0 = off
+    void setRedLed(bool); //As above
+    void setOpenLed(bool); //As above
+    void setCloseLed(bool); //As above
     
     bool getKillSwitch(); // Returns the state of the kill switch (red on front).
                           // If pressed = 1, if not pressed = 0
@@ -53,6 +48,8 @@ public: // Public functions (+constructor)
                        // If pressed = 1, if not pressed = 0
     bool getCloseEnd(); // Returns the state of the switch to simulate gripper is open. (Top left side.)
                         // If pressed = 1, if not pressed = 0
+    
+    
     
 private: // Private functions
 };

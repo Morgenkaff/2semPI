@@ -1,28 +1,24 @@
-#ifndef PIN_DC_H
-#define PIN_DC_H
+#ifndef DC_H
+#define DC_H
 
-#include <pigpio.h> // Library used to connect to the gpios
-#include "pin_base.h" // Base control of the gpios (led, switches) and definings for the pins
+#include "motor.h"
 
-class Pin_dc {
+class Dc : public Motor {
 private:
     
-    int _speed;
-    bool _direction;
+    // Vars used for setting readeble names for the GPIOs used by the DC motor:
+    
+    int run_open_;
+    int run_close_;
     
 public:
-    Pin_dc(); // Simple constructor. Nothing happens
+    Dc(); // Default constructor, sets GPIOs used
+    ~Dc();
     
-    Pin_dc(bool direction, int speed); // Constructiong and setting the speed and direction at once
-        // Speed is sat by value from 0-255
-
-    void setSpeed(int); // Stets the speed for the motor by value from 0-255
-    int getSpeed(); // Stets the speed for the motor by value from 0-255
-    void setDirection(bool); // Sets the direction of the motor
-    bool getDirection(); // Sets the direction of the motor
+    void run(int&, bool&); // runs motor at given speed (1 - 5), in given direction 1 = opening 0 = closing
     
-private:
-    void runMotor(int&, bool&); // Function to write PWM to the right pin, dep. on dir.
+    void stop(); // Stops the motor by setting all used pins to 0 (low)
+        
 };
     
 

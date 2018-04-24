@@ -1,72 +1,49 @@
+// Should be removed when in working order:
+#include <iostream>
 
-/*
- *  Program for testing c++ on the Pi and how to control the GPIOs with it.
- *  The library for using GPIOs is pigpio (http://abyz.me.uk/rpi/pigpio).
- *
- *  To build the code, use the command:
- *
- *    g++ -o "name_of_output_file" "name_of_input_file".cpp -lpigpio -lrt
- *
- *  lpigpio includes the pigpio library and lrt is to include the library for realtime functionality
- *  (required by pigpio).
- */
 
-/*
- *  Libraries:
- *  iostream used for on screen feedback and debuggin
- *  pigpio for the GPIO
- */
 #include <pigpio.h>
-#include "pin_base.h"
-#include "pin_dc.h"
+#include "dc.h"
 
-Pin_dc::Pin_dc(){
-    _speed = 0;
-    _direction = 0;
+Dc::Dc(){
+    
+    // Setting the pins used:
+    run_open_ = 19;
+    run_close_ = 13;
+    
+    std::cout << "DC motor initiated" << std::endl;
+    
 }
 
-Pin_dc::Pin_dc(bool direction, int speed){
-    if (0 < speed < 256){
-        _direction = direction;
-        _speed = speed;
+Dc::~Dc(){
+}
+    
+
+void Dc::run(int& speed, bool& direction){
+
+    // If statement based on given value for direction determine which
+    // pin to be set to given speed.
+    
+    if (direction){   
+    std::cout << "DC is opening" << std::endl;                
+        /*                              
+        gpioPWM(run_close_,0);        // For safety is the pin for the opposite direction set to 0
+        gpioPWM(run_open_, speed*50); // Multiplies the given value for speed with 50, to get usefull value
+        */                              // in the range of 0 - 255 that is default for pigpio PWM
     } else {
-        _speed = 0;
-        _direction = 0;
+    std::cout << "DC is closing" << std::endl;                
+        /*
+        gpioPWM(run_open_, 0);
+        gpioPWM(run_close_, speed*50);
+        */
     }
-        
-    runMotor(_speed, _direction);
+    
 }
 
-void Pin_dc::runMotor(int& speed, bool& direction){
-    if (direction == 0) {
-        gpioPWM(MOTOR_RUN_L, 0);
-        gpioPWM(MOTOR_RUN_R, _speed);
-    } else if (_direction == 1) {
-        gpioPWM(MOTOR_RUN_L, _speed);
-        gpioPWM(MOTOR_RUN_R, 0);
-    }
-}
-
-void Pin_dc::setSpeed(int speed){
-    if (0 < speed < 256){
-        _speed = speed;
-    } else {
-        // Do nothing
-    }
-        
-    runMotor(_speed, _direction);
-}
-
-int Pin_dc::getSpeed(){
-    return _speed;
-}
-
-void Pin_dc::setDirection(bool direction){
-    _direction = direction;
-        
-    runMotor(_speed, _direction);
-}
-
-bool Pin_dc::getDirection(){
-    return _direction;
+void Dc::stop(){
+    std::cout << "DC is stopped" << std::endl;
+    /*
+    gpioPWM(run_open_, 0);
+    gpioPWM(run_close_,0);
+    */
 }

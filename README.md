@@ -16,11 +16,11 @@
              GND|-- 15|--
   close_grip_hid|17 18|--
    open_grip_hid|27 --|--
-   open_end_grip|22 23|green_led
-            3.3v|-- 24|red_led
+   open_end_grip|22 23|yellow_led
+            3.3v|-- 24|blue_led
  closed_end_grip|10 --|GND
-   close_grip_ur| 9 25|blue_led
-    open_grip_ur|11  8|yellow_led
+   close_grip_ur| 9 25|green_led
+    open_grip_ur|11  8|red_led
              GND|--  7|--
               --|-- --|--
           step_4| 5 --|GND
@@ -37,7 +37,7 @@
  
  ## TODO:
  
-- Naming should follow the "Google C++ Style Guide".
+- There should be a style guide
 - All "#define's" for the pins should be replaced with vars of type int.
 - Class diagram and documentation of classes.
 - ...

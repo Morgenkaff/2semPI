@@ -1,146 +1,128 @@
-/*
- *  Class for running a stepper motor (kind of) as a normal dc motor.
- *
- *  For use with 2semPi at https://github.com/Morgenkaff/2semPI
- */
-
 #include <pigpio.h> // Library used to connect to the gpios
-#include "pin_base.h" // Base control of the gpios (led, switches) and definings for the pins
-#include "pin_step.h" // Header file for this class
+#include <iostream>
+#include <thread>
+#include "hid.h"
 
-Pin_step::Pin_step(){
-    _speed = 0;
-    _direction = 0;
-    _runStepper(_speed, _direction);
-}
-
-Pin_step::Pin_step(bool direction, int speed){
-    if (0 < speed < 256){
-        _direction = direction;
-        _speed = speed;
-    } else {
-        _speed = 0;
-        _direction = 0;
-    }
+Hid::Hid(){
     
-    _runStepper(_speed, _direction);
-}
-
-
-
-void Pin_step::setSpeed(int speed){
-    if (0 < speed < 256){
-        _speed = speed;
-    } else {
-        // Do nothing
-    }
+// Declaring the used pins as readable names (read docs/readme.md)
     
-    _runStepper(_speed, _direction);
-}
-
-int Pin_step::getSpeed(){
-    return _speed;
-}
-
-void Pin_step::setDirection(bool direction){
-    _direction = direction;
+    // Inputs pins:
+    kill_sw_ = 4;
+    open_end_hid_ = 2;
+    close_end_hid_ = 3;
+    open_grip_hid_ = 27;
+    close_grip_hid_ = 17;
     
-    _runStepper(_speed, _direction);
-}
-
-bool Pin_step::getDirection(){
-    return _direction;
-}
-
-void Pin_step::_runStepper(int speed, bool direction){
+    // Output pins:
+    green_led_ = 25;
+    red_led_ = 8;
+    is_opening_led_ = 24;
+    is_closing_led_ = 23;
     
-    _speed = speed;
-    _direction = direction;
+// Pin declarations end
     
-    int delay_time = 5000 - (_speed * (4300/255));
-    _step_case = 1;
+// Setting the GPIO modes for the different pins
     
-    while (_speed != 0) {
-        _set_step(_step_case);
-        _stepTraverse();
-        _loopCase();
-        gpioDelay(delay_time);
-    }
+    // Inputs
+    gpioSetMode(kill_sw_, PI_INPUT);
+    gpioSetMode(open_end_hid_, PI_INPUT);
+    gpioSetMode(close_end_hid_, PI_INPUT);
+    gpioSetMode(open_grip_hid_, PI_INPUT);
+    gpioSetMode(close_grip_hid_, PI_INPUT);
+    
+    // Outputs
+    gpioSetMode(green_led_, PI_OUTPUT);
+    gpioSetMode(red_led_, PI_OUTPUT);
+    gpioSetMode(is_opening_led_, PI_OUTPUT);
+    gpioSetMode(is_closing_led_, PI_OUTPUT);
+    
+// Mode declarations end
+    
+// Setting all the default values of LEDs and switches IO (switches are pull down, why they are set to high)
+    
+    // Inputs
+    gpioWrite(kill_sw_, 1);
+    gpioWrite(open_end_hid_, 1);
+    gpioWrite(close_end_hid_, 1);
+    gpioWrite(open_grip_hid_, 1);
+    gpioWrite(close_grip_hid_, 1);
+    
+    // Outputs
+    gpioWrite(green_led_, 0);
+    gpioWrite(red_led_, 0);
+    gpioWrite(is_opening_led_, 0);
+    gpioWrite(is_closing_led_, 0);
+    
+    std::cout << "HID init" << std::endl;
+    
+    
+}
+Hid::~Hid(){
+    
+// Turning off the LEDs and switches (switches are "off" at high (pull down))
+    
+    // Inputs
+    gpioWrite(kill_sw_, 1);
+    gpioWrite(open_end_hid_, 1);
+    gpioWrite(close_end_hid_, 1);
+    gpioWrite(open_grip_hid_, 1);
+    gpioWrite(close_grip_hid_, 1);
+    
+    // Outputs
+    gpioWrite(green_led_, 0);
+    gpioWrite(red_led_, 0);
+    gpioWrite(is_opening_led_, 0);
+    gpioWrite(is_closing_led_, 0);
+    
+    std::cout << "HID term" << std::endl;
+    
+    
+}
+    
+
+void Hid::setGreenLed(bool b){
+    gpioWrite(red_led_, 0); // Turns off the red led in the bi-led
+    
+    gpioWrite(green_led_, b);
 }
 
-void Pin_step::_set_step(int& step_case){
-        switch(step_case){
-            case 0:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, HIGH);
-                break; 
-            case 1:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, HIGH);
-                gpioWrite(STEP_4, HIGH);
-                break; 
-            case 2:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, HIGH);
-                gpioWrite(STEP_4, LOW);
-                break; 
-            case 3:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, HIGH);
-                gpioWrite(STEP_3, HIGH);
-                gpioWrite(STEP_4, LOW);
-                break; 
-            case 4:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, HIGH);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, LOW);
-                break; 
-            case 5:
-                gpioWrite(STEP_1, HIGH); 
-                gpioWrite(STEP_2, HIGH);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, LOW);
-                break; 
-            case 6:
-                gpioWrite(STEP_1, HIGH); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, LOW);
-                break; 
-            case 7:
-                gpioWrite(STEP_1, HIGH); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, HIGH);
-                break; 
-            default:
-                gpioWrite(STEP_1, LOW); 
-                gpioWrite(STEP_2, LOW);
-                gpioWrite(STEP_3, LOW);
-                gpioWrite(STEP_4, LOW);
-                break; 
-        }
+void Hid::setRedLed(bool b){
+    gpioWrite(green_led_, 0); // Turns off the green led in the bi-led
+    
+    gpioPWM(red_led_, (int)b*10); // Should change resistor instead og this ........
 }
 
-/*
- * This function traverse the step_case, depending on the direction.
- */
-void Pin_step::_stepTraverse(){
-    if(_direction==1){ _step_case++;}
-    if(_direction==0){ _step_case--;}
+void Hid::setOpenLed(bool b){
+    gpioWrite(is_opening_led_, b);
 }
 
-/*
- * This function changes the var step_case, securing that the case switch
- * will "loop around".
- */
-void Pin_step::_loopCase(){    
-    if(_step_case>7){_step_case=0;}
-    if(_step_case<0){_step_case=7;}
+void Hid::setCloseLed(bool b){
+    gpioWrite(is_closing_led_, b);
 }
+
+
+// Functions for switches:
+
+bool Hid::getKillSwitch(){
+    return !gpioRead(kill_sw_);
+}
+
+bool Hid::getOpenGrip(){
+    return !gpioRead(open_grip_hid_);
+}
+
+bool Hid::getCloseGrip(){
+    return !gpioRead(close_grip_hid_);
+}
+
+bool Hid::getOpenEnd(){
+    return !gpioRead(open_end_hid_);
+}
+
+bool Hid::getCloseEnd(){
+    return !gpioRead(close_end_hid_);
+}
+
+
 
