@@ -49,6 +49,8 @@ public: // Public functions (+constructor)
     bool getCloseEnd(); // Returns the state of the switch to simulate gripper is open. (Top left side.)
                         // If pressed = 1, if not pressed = 0
     
+    // FUNCTION WISH LIST:
+    
     
     
 private: // Private functions

@@ -1,13 +1,12 @@
 
 /*
- *  Class for interfacing with the motor. It does not interact directly with the GPIOs, instead it
- *  constructs either a stepper or dc class, depending on parametres in its own constructor, or by a 
- *  member function.
+ *  Class for interfacing with the motor. It does not interact directly with the GPIOs to control the motor.
+ *  Instead it constructs either a stepper or dc class, depending on parametres in its own constructor, or by a 
+ *  member function. It does however control the GPIOs for the "end switches" on the gripper.
  *  This method is choosen over eg a interface/abstract class to prevent situation with drastically 
  *  different "gripper methods" such as electro magnets and such, and because this class then can be used
  *  to store loggin data about motor travel, torque etc, keep the speed between motors etc.
  *  Might be usefull if the motor will be runned in seperate thread..
- *  
  */
 
 #include <iostream>
@@ -17,9 +16,18 @@
 #include "stepper.h"
 
 MotorCtrl::MotorCtrl(bool& motor, bool& dir, int& speed){
+    
+    // "End switches":
+    open_end_grip_ = 22;
+    close_end_grip_ = 10;
+    gpioSetMode(open_end_grip_, PI_INPUT);
+    gpioSetMode(close_end_grip_, PI_INPUT);
+    
+    // Constructing motor
     direction_ = dir;
     speed_ = speed;
     initMotor(motor);
+    
 }
 
 MotorCtrl::~MotorCtrl(){
@@ -39,9 +47,8 @@ bool MotorCtrl::changeMotor(bool& b){
     initMotor(b);
 }
 
-void MotorCtrl::setSpeed(int& i){
+void MotorCtrl::setSpeed(int i){
     speed_ = i;
-    motor_->run(speed_, direction_);
 }
 
 int MotorCtrl::getSpeed(){
@@ -49,16 +56,14 @@ int MotorCtrl::getSpeed(){
 }
 
 void MotorCtrl::setDirection(bool b){
-    motor_->run(speed_, b);
+    stop();
+    direction_ = b;
+    start();
 }
 
 bool MotorCtrl::getDirection(){
     return direction_;
 }
-
-/*
-void Motor::runMotor(){ // Probably redundant
-}*/
 
 bool MotorCtrl::initMotor(bool& type){
     if (type){
@@ -74,4 +79,12 @@ bool MotorCtrl::initMotor(bool& type){
     
 bool MotorCtrl::termMotor(){
     delete motor_;
+}
+
+bool MotorCtrl::getOpenEnd() {
+    return !gpioRead(open_end_grip_);
+}
+
+bool MotorCtrl::getCloseEnd() {
+    return !gpioRead(close_end_grip_);
 }

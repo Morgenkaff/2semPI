@@ -15,20 +15,36 @@ Stepper::Stepper(){
     
     step_1_ = 19;
     step_2_ = 13;
-    step_3_ = 6;
-    step_4_ = 5;
+    step_3_ = 5;
+    step_4_ = 6;
     
+    
+    gpioSetMode(step_1_, PI_OUTPUT);
+    gpioSetMode(step_2_, PI_OUTPUT);
+    gpioSetMode(step_3_, PI_OUTPUT);
+    gpioSetMode(step_4_, PI_OUTPUT);
+    
+    gpioWrite(step_1_, 0);
+    gpioWrite(step_2_, 0);
+    gpioWrite(step_3_, 0);
+    gpioWrite(step_4_, 0);
+    
+    
+    thread_started_ = 0;
     std::cout << "Stepper motor initiated" << std::endl;
     
 }
 
 void Stepper::run(int& i, bool& b) {
     
-    step_speed_ = 1;
+    step_speed_ = i;
     step_direction_ = b;
+    
     step_traverser_ = 1;
     
-    thread_ = new std::thread(&Stepper::stepDriver,this);
+    step_thread_ = new std::thread(&Stepper::stepDriver,this);
+    thread_started_ = 1;
+    std::cout << "stepper is: " << step_direction_ << std::endl;
     
 }
 
@@ -36,23 +52,89 @@ void Stepper::stop(){
     
     
     step_traverser_ = 0;
+    //_USE JOINABLE INSTEAD?_
+    if (thread_started_){ // Checks if step_thread is started (if the motor is running) 
+        step_thread_->join();
+    }
     
-    thread_->join();
+    step_case_ = 0; // Reset the step_case (case loop)
+    
+    gpioWrite(step_1_, 0); // Turns off all the pins used for the stepper
+    gpioWrite(step_2_, 0);
+    gpioWrite(step_3_, 0);
+    gpioWrite(step_4_, 0);
     
     std::cout << "stepper stopped" << std::endl;
+    thread_started_ = 0;
     
 }
 
 void Stepper::stepDriver(){
     
-    while (step_traverser_){
-        std::cout << "stepper is: " << step_direction_ << std::endl;
-        gpioSleep(PI_TIME_RELATIVE, 1, 0);
-    }
+    step_case_ = 0;
     
-    /*
-    for (step_traverser_ ; step_traverser_ < 9 ; step_traverser_ + step_direction_) {
-        std::cout << "stepper" << step_traverser_ << std::endl;
+    while (step_traverser_){
+        switch(step_case_){
+            case 0:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 1);
+                break; 
+            case 1:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 1);
+                gpioWrite(step_4_, 1);
+                break; 
+            case 2:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 1);
+                gpioWrite(step_4_, 0);
+                break; 
+            case 3:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 1);
+                gpioWrite(step_3_, 1);
+                gpioWrite(step_4_, 0);
+                break; 
+            case 4:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 1);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 0);
+                break; 
+            case 5:
+                gpioWrite(step_1_, 1); 
+                gpioWrite(step_2_, 1);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 0);
+                break; 
+            case 6:
+                gpioWrite(step_1_, 1); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 0);
+                break; 
+            case 7:
+                gpioWrite(step_1_, 1); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 1);
+                break; 
+            default:
+                gpioWrite(step_1_, 0); 
+                gpioWrite(step_2_, 0);
+                gpioWrite(step_3_, 0);
+                gpioWrite(step_4_, 0);
+                break; 
+        }
+        if(step_direction_==1){ step_case_++;}
+        if(step_direction_==0){ step_case_--;}
+        if(step_case_>7){step_case_=0;}
+        if(step_case_<0){step_case_=7;}
+        gpioDelay(400+(step_speed_*200));
+        //std::cout << "step: " << step_case_ << std::endl;
     }
-    */
 }

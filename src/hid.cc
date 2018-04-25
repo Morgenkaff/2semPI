@@ -55,6 +55,7 @@ Hid::Hid(){
     gpioWrite(is_closing_led_, 0);
     
     std::cout << "HID init" << std::endl;
+    setGreenLed(1); // Turning green led on, to indicate "ready"
     
     
 }

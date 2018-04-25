@@ -22,7 +22,10 @@ private:
                           // Should be set as 1 or -1
     bool step_traverser_;  // Int used to control for loop
     
-    std::thread* thread_;
+    int step_case_;
+    
+    std::thread* step_thread_;
+    bool thread_started_;
     
 public:
     Stepper(); // Default constructor, sets GPIOs used

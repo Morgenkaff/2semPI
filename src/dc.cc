@@ -11,6 +11,12 @@ Dc::Dc(){
     run_open_ = 19;
     run_close_ = 13;
     
+    gpioSetMode(run_open_, PI_OUTPUT);
+    gpioSetMode(run_close_, PI_OUTPUT);
+    
+    gpioPWM(run_open_, 0);
+    gpioPWM(run_close_, 0);
+        
     std::cout << "DC motor initiated" << std::endl;
     
 }
@@ -26,24 +32,24 @@ void Dc::run(int& speed, bool& direction){
     
     if (direction){   
     std::cout << "DC is opening" << std::endl;                
-        /*                              
-        gpioPWM(run_close_,0);        // For safety is the pin for the opposite direction set to 0
-        gpioPWM(run_open_, speed*50); // Multiplies the given value for speed with 50, to get usefull value
-        */                              // in the range of 0 - 255 that is default for pigpio PWM
+                                 
+        gpioPWM(run_close_,0);      // For safety is the pin for the opposite direction set to 0
+        gpioPWM(run_open_, speed*80);    // Multiplies the given value for speed with 80, to get usefull value
+                                    // in the range of 0 - 255 that is default for pigpio PWM
     } else {
     std::cout << "DC is closing" << std::endl;                
-        /*
+        
         gpioPWM(run_open_, 0);
-        gpioPWM(run_close_, speed*50);
-        */
+        gpioPWM(run_close_, speed*80);
+        
     }
     
 }
 
 void Dc::stop(){
     std::cout << "DC is stopped" << std::endl;
-    /*
+    
     gpioPWM(run_open_, 0);
-    gpioPWM(run_close_,0);
-    */
+    gpioPWM(run_close_, 0);
+    
 }
