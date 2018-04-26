@@ -3,10 +3,10 @@
  */
 
 #include <pigpio.h> // Library used to connect to the gpios
-#include <thread> // Used to run hid in seperate thread.
-#include <iostream>
+//#include <thread> // Used to run hid in seperate thread.
+#include <iostream> // For debuggin
 
-#include "motor_ctrl.h"
+//#include "motor_ctrl.h" // 
 
 #include "pin_ctrl.h" // Own header file
 
@@ -25,15 +25,20 @@ bool PinCtrl::init(){
     
     if (ready){
         
-        hid = new Hid;
+        hid = new Hid; // Constructing the HID class
         
-        motor_ctrl = new MotorCtrl(motor_type_, direction_, speed_);
+        ur_conn = new UrConn; // Constructing the UrConn class
+        
+        motor_ctrl = new MotorCtrl(motor_type_, direction_, speed_); // Constructing the motor control class class
+        
+        ur_conn->isReady(0); // "Is not yet ready to be controlled"
         
         motor_running_ = 0; // Motor not yes started
         temp_direction_ = direction_;
         
         input_scan_thread = new std::thread(&PinCtrl::inputScanner,this);
         std::cout << "Thread created! " << std::endl;
+        
         
         return 1;
         
@@ -53,6 +58,7 @@ bool PinCtrl::terminate(){
     std::cout << "Thread joined! " << std::endl;
     
     delete hid;
+    delete ur_conn;
     gpioTerminate();
 }
 
@@ -61,11 +67,13 @@ void PinCtrl::run(int state){
     
     running_ = 1;
     run_state_ = state;
+    ur_conn->isReady(1); // Signals to UR that it is ready
     
     while (running_){
         
         switch(run_state_){
-            case 1:
+            case 1: // Working loop should be created
+                
                 
                 working();
                 break;
@@ -96,7 +104,7 @@ void PinCtrl::working(){ //When motor is set and all
      *                
      */
     //std::cout << "working loop" << std::endl;
-    if (input_ == 1) {
+    if (input_ == 1) { // "Killing signal"
         hid->setRedLed(1);
         gpioSleep(PI_TIME_RELATIVE, 3, 0);
         if (input_ == 1){
@@ -116,6 +124,7 @@ void PinCtrl::working(){ //When motor is set and all
         //(Only calls the motor once)
         if (temp_direction_ != 0 || motor_running_ != 1) {
             temp_direction_ = 0;
+            ur_conn->isReady(0); // not ready when motor is running
             hid->setOpenLed(0);
             hid->setCloseLed(1);
             motor_ctrl->setDirection(temp_direction_);
@@ -127,6 +136,7 @@ void PinCtrl::working(){ //When motor is set and all
         //(Only calls the motor once)
         if (temp_direction_ != 1 || motor_running_ != 1) {
             temp_direction_ = 1;
+            ur_conn->isReady(0); // not ready when motor is running 
             hid->setOpenLed(1);
             hid->setCloseLed(0);
             motor_ctrl->setDirection(temp_direction_);
@@ -140,6 +150,8 @@ void PinCtrl::working(){ //When motor is set and all
                 motor_ctrl->stop();
                 motor_running_ = 0;
             }
+            gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
+            ur_conn->isReady(1); 
         }
         
     } else if (input_ == 5) {
@@ -149,6 +161,8 @@ void PinCtrl::working(){ //When motor is set and all
                 motor_ctrl->stop();
                 motor_running_ = 0;
             }
+            gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
+            ur_conn->isReady(1); 
         }
     }
     else {
@@ -161,6 +175,7 @@ void PinCtrl::working(){ //When motor is set and all
 
 void PinCtrl::standby(){ // For problems(?) and motor change and such
     in_standby_loop_ = 1;    
+    ur_conn->isReady(0); // Not ready when in stadnby
     
     while (in_standby_loop_){ // Loop is not nescessary now. But might be later, so its let be for now
         
@@ -289,15 +304,15 @@ void PinCtrl::setMotorDirection(bool& b){
     direction_ = b;
 }
 
-void PinCtrl::inputScanner(){
+void PinCtrl::inputScanner(){ // Scans for input from different classes AND differentiates between multiple buttons pressed etc
     scan_inputs_ = true;
     scan_freq_ = 100;
     while (scan_inputs_){
         if (hid->getKillSwitch() && !hid->getOpenEnd()){
             input_ = 1;
-        } else if (hid->getCloseGrip() && !(hid->getOpenGrip() || hid->getOpenEnd())) {
+        } else if ((hid->getCloseGrip() || ur_conn->getCloseGrip()) && !(hid->getOpenGrip() || hid->getOpenEnd())) {
             input_ = 2;
-        } else if (hid->getOpenGrip() && !(hid->getCloseGrip() || hid->getOpenEnd())) {
+        } else if ((hid->getOpenGrip() || ur_conn->getOpenGrip()) && !(hid->getCloseGrip() || hid->getOpenEnd())) {
             input_ = 3;
         } else if ((hid->getCloseEnd() || motor_ctrl->getCloseEnd()) && !hid->getOpenEnd()) {
             input_ = 4;

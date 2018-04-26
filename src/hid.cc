@@ -1,6 +1,6 @@
 #include <pigpio.h> // Library used to connect to the gpios
 #include <iostream>
-#include <thread>
+//#include <thread> // For blining LEDs, indipendent from rest
 #include "hid.h"
 
 Hid::Hid(){

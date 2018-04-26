@@ -2,6 +2,7 @@
 #define PIN_CTRL_H
 
 #include "hid.h" // headerfile for the HID
+#include "ur_conn.h" // headerfile for the class connecting with UR
 #include "motor_ctrl.h" // Headerfile for the motor control class
 #include <thread>
 
@@ -10,6 +11,8 @@ class PinCtrl {
 private:
     
     Hid* hid; // Pointer used for constructing the hid class on the stack.
+    
+    UrConn* ur_conn; // Pointer used for constructing the UrConn class
     
     MotorCtrl* motor_ctrl; // Pointer to the motor control class
     
