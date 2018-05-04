@@ -1,7 +1,6 @@
 #ifndef UR_CONN_H
 #define UR_CONN_H
 
-
 class UrConn {
 private: // Private vars
     
@@ -18,10 +17,12 @@ public: // Public functions (+constructor)
     UrConn();
     ~UrConn();
     
-    isReady(bool b); // Sending ready signal to the robot
+    void isReady(bool b); // Sending ready signal to the robot
     
-    getOpenGrip(); // Getting signal from robot to open gripper
+    bool getOpenGrip(); // Getting signal from robot to open gripper
     
-    getCloseGrip(); // Getting signal from robot to close gripper
+    bool getCloseGrip(); // Getting signal from robot to close gripper
+    
+};
 
 #endif // UR_CONN_H

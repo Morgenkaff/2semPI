@@ -43,7 +43,7 @@ int main()
     
     cout << "pin_ctrl deleted" << endl;
     
-    system("sudo shutdown -P now");
+    system("sudo halt");
     
     return 0;
     

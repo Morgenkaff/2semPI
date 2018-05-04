@@ -1,13 +1,16 @@
 #include <pigpio.h>
 #include "ur_conn.h"
 
+
+#include <iostream> // For debuggin
+
 UrConn::UrConn(){
     
 // Declaring the pins
     
     // Inputs
     open_grip_ur_ = 11;
-    close_grip_ur_ = 0;
+    close_grip_ur_ = 9;
     
     // Output
     is_ready_ = 26;
@@ -16,7 +19,7 @@ UrConn::UrConn(){
     
     // Inputs
     gpioSetMode(open_grip_ur_, PI_INPUT);
-    gpioSetMode(close_grip_ur_, PI_OUTPUT);
+    gpioSetMode(close_grip_ur_, PI_INPUT);
     
     // Output
     gpioSetMode(is_ready_, PI_OUTPUT);
@@ -43,14 +46,17 @@ UrConn::~UrConn() {
     
 }
 
-UrConn::isReady(bool b){
-    gpioWrite()is_ready_, b);
+void UrConn::isReady(bool b){
+            std::cout << "send ready" << b<< std::endl;
+    gpioWrite(is_ready_, b);
 }
 
-UrConn::getOpenGrip(){
-    return !gpioRead(open_grip_ur_);
+bool UrConn::getOpenGrip(){
+        //    std::cout << "get open"<< std::endl;
+    return gpioRead(open_grip_ur_);
 }
 
-UrConn::getCloseGrip(){
-    return !gpioRead(close_grip_ur_);
+bool UrConn::getCloseGrip(){
+          //  std::cout << "get close"<< std::endl;
+    return gpioRead(close_grip_ur_);
 }

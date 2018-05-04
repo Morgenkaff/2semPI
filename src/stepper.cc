@@ -13,8 +13,8 @@
 
 Stepper::Stepper(){
     
-    step_1_ = 19;
-    step_2_ = 13;
+    step_1_ = 20;
+    step_2_ = 16;
     step_3_ = 5;
     step_4_ = 6;
     
@@ -134,7 +134,7 @@ void Stepper::stepDriver(){
         if(step_direction_==0){ step_case_--;}
         if(step_case_>7){step_case_=0;}
         if(step_case_<0){step_case_=7;}
-        gpioDelay(400+(step_speed_*200));
+        gpioDelay(700+(step_speed_*200)); // 400+(step_speed_*200)
         //std::cout << "step: " << step_case_ << std::endl;
     }
 }

@@ -3,11 +3,11 @@
  */
 
 #include <pigpio.h> // Library used to connect to the gpios
-//#include <thread> // Used to run hid in seperate thread.
+#include <thread> // Used to run hid in seperate thread.
 #include <iostream> // For debuggin
 
-//#include "motor_ctrl.h" // 
-
+#include "motor_ctrl.h" // 
+//#include "ur_conn.h"
 #include "pin_ctrl.h" // Own header file
 
 PinCtrl::PinCtrl(){
@@ -29,9 +29,7 @@ bool PinCtrl::init(){
         
         ur_conn = new UrConn; // Constructing the UrConn class
         
-        motor_ctrl = new MotorCtrl(motor_type_, direction_, speed_); // Constructing the motor control class class
-        
-        ur_conn->isReady(0); // "Is not yet ready to be controlled"
+        motor_ctrl = new MotorCtrl(motor_type_, direction_, speed_); // Constructing the motor control class 
         
         motor_running_ = 0; // Motor not yes started
         temp_direction_ = direction_;
@@ -67,7 +65,6 @@ void PinCtrl::run(int state){
     
     running_ = 1;
     run_state_ = state;
-    ur_conn->isReady(1); // Signals to UR that it is ready
     
     while (running_){
         
@@ -96,14 +93,11 @@ void PinCtrl::run(int state){
 
 void PinCtrl::working(){ //When motor is set and all
     
-    //in_working_loop_ = 1;
-    /*
-     *    while (in_working_loop_) {
-     *        switch(input_){
-     *            case 1: // if kill_sw is pressed
-     *                
-     */
-    //std::cout << "working loop" << std::endl;
+    in_working_loop_ = 1;
+    ur_conn->isReady(1); // Signals to UR that it is ready
+    
+    while (in_working_loop_){
+    
     if (input_ == 1) { // "Killing signal"
         hid->setRedLed(1);
         gpioSleep(PI_TIME_RELATIVE, 3, 0);
@@ -170,6 +164,7 @@ void PinCtrl::working(){ //When motor is set and all
     }
     
     //gpioSleep(PI_TIME_RELATIVE, 1, 0);
+    }
     
 }
 
@@ -322,9 +317,11 @@ void PinCtrl::inputScanner(){ // Scans for input from different classes AND diff
             input_ = 6;
         } else if (hid->getOpenEnd() && hid->getCloseEnd()) {
             input_ = 7;
-        } else if (false) {
+        } else if (ur_conn->getCloseGrip()) {
+            std::cout << "pion"<< std::endl;
             input_ = 8;
-        } else if (false) {
+        } else if (ur_conn->getOpenGrip()) {
+            std::cout << "open"<< std::endl;
             input_ = 9;
         } else if (false) {
             input_ = 10;
