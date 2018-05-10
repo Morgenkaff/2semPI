@@ -16,7 +16,7 @@ int main()
     
     
     // These vars should be defined and controllod in conjunction with OPC in future
-    bool motor_type = 0;
+    bool motor_type = 1;
     bool motor_dir = 0;
     int motor_speed = 3;
     

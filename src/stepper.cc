@@ -13,10 +13,10 @@
 
 Stepper::Stepper(){
     
-    step_1_ = 20;
-    step_2_ = 16;
-    step_3_ = 5;
-    step_4_ = 6;
+    step_1_ = 26;
+    step_2_ = 21;
+    step_3_ = 6;
+    step_4_ = 20;
     
     
     gpioSetMode(step_1_, PI_OUTPUT);
@@ -31,7 +31,7 @@ Stepper::Stepper(){
     
     
     thread_started_ = 0;
-    std::cout << "Stepper motor initiated" << std::endl;
+    // std::cout << "Stepper motor initiated" << std::endl;
     
 }
 
@@ -44,7 +44,7 @@ void Stepper::run(int& i, bool& b) {
     
     step_thread_ = new std::thread(&Stepper::stepDriver,this);
     thread_started_ = 1;
-    std::cout << "stepper is: " << step_direction_ << std::endl;
+//     std::cout << "stepper is: " << step_direction_ << std::endl;
     
 }
 
@@ -53,6 +53,7 @@ void Stepper::stop(){
     
     step_traverser_ = 0;
     //_USE JOINABLE INSTEAD?_
+//     std::cout << step_thread_->joinable() << std::endl;
     if (thread_started_){ // Checks if step_thread is started (if the motor is running) 
         step_thread_->join();
     }
@@ -64,7 +65,7 @@ void Stepper::stop(){
     gpioWrite(step_3_, 0);
     gpioWrite(step_4_, 0);
     
-    std::cout << "stepper stopped" << std::endl;
+//     std::cout << "stepper stopped" << std::endl;
     thread_started_ = 0;
     
 }
@@ -135,6 +136,5 @@ void Stepper::stepDriver(){
         if(step_case_>7){step_case_=0;}
         if(step_case_<0){step_case_=7;}
         gpioDelay(700+(step_speed_*200)); // 400+(step_speed_*200)
-        //std::cout << "step: " << step_case_ << std::endl;
     }
 }

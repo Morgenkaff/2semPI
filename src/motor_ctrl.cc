@@ -18,10 +18,8 @@
 MotorCtrl::MotorCtrl(bool& motor, bool& dir, int& speed){
     
     // "End switches":
-    open_end_grip_ = 22;
-    close_end_grip_ = 10;
-    gpioSetMode(open_end_grip_, PI_INPUT);
-    gpioSetMode(close_end_grip_, PI_INPUT);
+    end_switch_ = 22;
+    gpioSetMode(end_switch_, PI_INPUT);
     
     // Constructing motor
     direction_ = dir;
@@ -81,10 +79,6 @@ bool MotorCtrl::termMotor(){
     delete motor_;
 }
 
-bool MotorCtrl::getOpenEnd() {
-    return !gpioRead(open_end_grip_);
-}
-
-bool MotorCtrl::getCloseEnd() {
-    return !gpioRead(close_end_grip_);
+bool MotorCtrl::getEndSwitch() {
+    return !gpioRead(end_switch_);
 }

@@ -70,6 +70,7 @@ void PinCtrl::run(int state){
         
         switch(run_state_){
             case 1: // Working loop should be created
+            std::cout << "working"<< std::endl;
                 
                 
                 working();
@@ -77,6 +78,7 @@ void PinCtrl::run(int state){
                 
             case 2:
                 
+            std::cout << "standby"<< std::endl;
                 standby();
                 break;
                 
@@ -125,7 +127,7 @@ void PinCtrl::working(){ //When motor is set and all
             motor_running_ = 1;
         }        
         
-    } else if (input_ == 3) { // Close gripper
+    } else if (input_ == 3) { // Open gripper
         // Checks if allready set direction, or if motor not running (button works as "start" besides set direction).
         //(Only calls the motor once)
         if (temp_direction_ != 1 || motor_running_ != 1) {
@@ -137,26 +139,23 @@ void PinCtrl::working(){ //When motor is set and all
             motor_running_ = 1;
         }
         
-    } else if (input_ == 4) {
+    } else if (input_ == 4) { // Stopping the motor
+            if (motor_running_) {
+                hid->setCloseLed(0);
+                hid->setOpenLed(0);
+                motor_ctrl->stop();
+                motor_running_ = 0;
+            }
+        
+    } else if (input_ == 5) { // Stoppen the closing of gripper by gripper_switch
         if (temp_direction_ == 0) { // Checks if allready set direction. (Only calls the motor once)
             if (motor_running_) {
                 hid->setCloseLed(0);
                 motor_ctrl->stop();
                 motor_running_ = 0;
+                gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
+                ur_conn->isReady(1); 
             }
-            gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
-            ur_conn->isReady(1); 
-        }
-        
-    } else if (input_ == 5) {
-        if (temp_direction_ == 1) { // Checks if allready set direction. (Only calls the motor once)
-            if (motor_running_) {
-                hid->setOpenLed(0);
-                motor_ctrl->stop();
-                motor_running_ = 0;
-            }
-            gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
-            ur_conn->isReady(1); 
         }
     }
     else {
@@ -242,7 +241,7 @@ void PinCtrl::standby(){ // For problems(?) and motor change and such
             hid->setCloseLed(0);
             
             
-        } else if (input_ == 4) { // Set speed
+        } else if (false) { // Set speed
             hid->setRedLed(0);
             bool speed_loop = 1;
             while (speed_loop) {
@@ -303,25 +302,30 @@ void PinCtrl::inputScanner(){ // Scans for input from different classes AND diff
     scan_inputs_ = true;
     scan_freq_ = 100;
     while (scan_inputs_){
-        if (hid->getKillSwitch() && !hid->getOpenEnd()){
+        if (hid->getOpenEnd() && hid->getCloseEnd()){ // Changing state between working and standby
+            std::cout << "kill"<< std::endl;
             input_ = 1;
-        } else if ((hid->getCloseGrip() || ur_conn->getCloseGrip()) && !(hid->getOpenGrip() || hid->getOpenEnd())) {
+        } else if (hid->getCloseGrip() || ur_conn->getCloseGrip()) { //
+            std::cout << "close"<< std::endl;
             input_ = 2;
-        } else if ((hid->getOpenGrip() || ur_conn->getOpenGrip()) && !(hid->getCloseGrip() || hid->getOpenEnd())) {
+        } else if (hid->getOpenGrip() || ur_conn->getOpenGrip()) { // 
+            std::cout << "open"<< std::endl;
             input_ = 3;
-        } else if ((hid->getCloseEnd() || motor_ctrl->getCloseEnd()) && !hid->getOpenEnd()) {
+        } else if (hid->getKillSwitch()) { // stop motor
+            std::cout << "hid stop"<< std::endl;
             input_ = 4;
-        } else if ((hid->getOpenEnd() || motor_ctrl->getOpenEnd()) && !hid->getCloseEnd()) {
+        } else if (motor_ctrl->getEndSwitch()) {
+            std::cout << "grip stop"<< std::endl;
             input_ = 5;
-        } else if (hid->getOpenGrip() && hid->getCloseGrip()) {
+        } else if (false) {
             input_ = 6;
-        } else if (hid->getOpenEnd() && hid->getCloseEnd()) {
+        } else if (false) {
             input_ = 7;
         } else if (ur_conn->getCloseGrip()) {
-            std::cout << "pion"<< std::endl;
+            std::cout << "ur_close"<< std::endl;
             input_ = 8;
         } else if (ur_conn->getOpenGrip()) {
-            std::cout << "open"<< std::endl;
+            std::cout << "ur_open"<< std::endl;
             input_ = 9;
         } else if (false) {
             input_ = 10;

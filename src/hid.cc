@@ -8,17 +8,19 @@ Hid::Hid(){
 // Declaring the used pins as readable names (read docs/readme.md)
     
     // Inputs pins:
-    kill_sw_ = 4;
-    open_end_hid_ = 2;
-    close_end_hid_ = 3;
-    open_grip_hid_ = 27;
-    close_grip_hid_ = 17;
+    kill_sw_ = 4; // Red switch. Stops motor, independent of direction.
+    
+    open_end_hid_ = 27; 
+    close_end_hid_ = 17;
+    
+    open_grip_hid_ = 2;
+    close_grip_hid_ = 3;
     
     // Output pins:
-    green_led_ = 25;
-    red_led_ = 8;
-    is_opening_led_ = 24;
-    is_closing_led_ = 23;
+    green_led_ = 14;
+    red_led_ = 15;
+    is_opening_led_ = 23;
+    is_closing_led_ = 24;
     
 // Pin declarations end
     
@@ -54,7 +56,7 @@ Hid::Hid(){
     gpioWrite(is_opening_led_, 0);
     gpioWrite(is_closing_led_, 0);
     
-    std::cout << "HID init" << std::endl;
+//     std::cout << "HID init" << std::endl;
     setGreenLed(1); // Turning green led on, to indicate "ready"
     
     
@@ -76,7 +78,7 @@ Hid::~Hid(){
     gpioWrite(is_opening_led_, 0);
     gpioWrite(is_closing_led_, 0);
     
-    std::cout << "HID term" << std::endl;
+//     std::cout << "HID term" << std::endl;
     
     
 }
@@ -104,6 +106,8 @@ void Hid::setCloseLed(bool b){
 
 
 // Functions for switches:
+// All returning negative (!), beacause they are wired as pull down.
+// Switch pressed gives 0 (low) on input.
 
 bool Hid::getKillSwitch(){
     return !gpioRead(kill_sw_);

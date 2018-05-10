@@ -14,9 +14,8 @@ private:
     
     Motor* motor_;
     
-    // Vars used to control GPIOs for the "end switches"
-    int open_end_grip_;
-    int close_end_grip_;
+    // Vars used to control GPIOs for the "end switch"
+    int end_switch_;
     
 public:
     
@@ -37,8 +36,7 @@ public:
     void setDirection(bool); // bool is direction (see direction_)
     bool getDirection(); // Returns the value of direction_
     
-    bool getOpenEnd();
-    bool getCloseEnd();
+    bool getEndSwitch();
     
 private:
     void runMotor(int&, bool&); // Function used to run motor 

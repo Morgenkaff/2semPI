@@ -9,11 +9,11 @@ UrConn::UrConn(){
 // Declaring the pins
     
     // Inputs
-    open_grip_ur_ = 11;
-    close_grip_ur_ = 9;
+    open_grip_ur_ = 9;
+    close_grip_ur_ = 10;
     
     // Output
-    is_ready_ = 26;
+    is_ready_ = 16;
     
 // Setting GPIO modes
     
@@ -27,8 +27,8 @@ UrConn::UrConn(){
 // Setting the default values for the pins
     
     // Inputs
-    gpioWrite(open_grip_ur_, 1);
-    gpioWrite(close_grip_ur_, 1);
+    gpioWrite(open_grip_ur_, 0);
+    gpioWrite(close_grip_ur_, 0);
     
     // Outputs
     gpioWrite(is_ready_, 0);
@@ -47,7 +47,7 @@ UrConn::~UrConn() {
 }
 
 void UrConn::isReady(bool b){
-            std::cout << "send ready" << b<< std::endl;
+          //  std::cout << "send ready" << b<< std::endl;
     gpioWrite(is_ready_, b);
 }
 
