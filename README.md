@@ -8,9 +8,9 @@
  g++ src/*.cc -lpigpio -lrt -lpthread
  </code>
  
- -lpigpio is for the pigpio library, used for the GPIOs (http://abyz.me.uk/rpi/pigpio).
- -lrt is required by pigpio. Used for realtime.
- -lpthread is used to seperate a thread for checking inputs independent from the main program.
+ - lpigpio is for the pigpio library, used for the GPIOs (http://abyz.me.uk/rpi/pigpio).
+ - lrt is required by pigpio. Used for realtime.
+ - lpthread is used to seperate a thread for checking inputs independent from the main program.
  
  The code should have sufficient comments to grasp the in and outs.
  
@@ -50,5 +50,4 @@ close_end_switch|22 23|blue_led
  ## TODO:
  
 - There should be a style guide
-- Class diagram and documentation of classes.
 - ...
