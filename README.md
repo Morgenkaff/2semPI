@@ -50,6 +50,5 @@ close_end_switch|22 23|blue_led
  ## TODO:
  
 - There should be a style guide
-- All "#define's" for the pins should be replaced with vars of type int.
 - Class diagram and documentation of classes.
 - ...
