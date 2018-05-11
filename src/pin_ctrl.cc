@@ -146,7 +146,7 @@ void PinCtrl::working(){ //When motor is set and all
             motor_ctrl->start(speed_, direction_);
             
             do {
-                gpioSleep(PI_TIME_RELATIVE, 1, 0);
+                gpioSleep(PI_TIME_RELATIVE, 2, 0);
             } while (input_ == 5 || input_ == 6);
             
             motor_ctrl->stop();
