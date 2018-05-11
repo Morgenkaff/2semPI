@@ -28,8 +28,7 @@ Stepper::Stepper(){
     gpioWrite(step_2_, 0);
     gpioWrite(step_3_, 0);
     gpioWrite(step_4_, 0);
-    
-    
+        
     thread_started_ = 0;
     // std::cout << "Stepper motor initiated" << std::endl;
     
@@ -131,10 +130,10 @@ void Stepper::stepDriver(){
                 gpioWrite(step_4_, 0);
                 break; 
         }
-        if(step_direction_==1){ step_case_++;}
-        if(step_direction_==0){ step_case_--;}
+        if(step_direction_==0){ step_case_++;}
+        if(step_direction_==1){ step_case_--;}
         if(step_case_>7){step_case_=0;}
         if(step_case_<0){step_case_=7;}
-        gpioDelay(700+(step_speed_*200)); // 400+(step_speed_*200)
+        gpioDelay(200+(step_speed_*400)); // 400+(step_speed_*200)
     }
 }

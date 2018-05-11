@@ -29,8 +29,6 @@ private:
                         // Could be changed to eg int, if we get more than 2 motor types
     int speed_;         // Speed is set in a range of 1 - 3 (1 is slowest 5 is fastest)
     bool direction_;    // 1 is closing, 0 is opening
-    bool motor_running_; // Used to check if motor is stopped (in working_loop)
-    bool temp_direction_;
     
     
     // Vars for state switch:

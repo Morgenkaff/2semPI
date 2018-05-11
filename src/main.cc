@@ -18,7 +18,7 @@ int main()
     // These vars should be defined and controllod in conjunction with OPC in future
     bool motor_type = 1;
     bool motor_dir = 0;
-    int motor_speed = 3;
+    int motor_speed = 1; // 1 fast, 2 medium, 3 slow
     
     
     PinCtrl* pin_ctrl = new PinCtrl;
@@ -35,7 +35,7 @@ int main()
         exit(1);
     }
         
-    pin_ctrl->run(2);
+    pin_ctrl->run(1); // 1 is working loop, 2 is standby
     
     cout << "pin_ctrl->run finised" << endl;
     
@@ -43,7 +43,7 @@ int main()
     
     cout << "pin_ctrl deleted" << endl;
     
-    system("sudo halt");
+    //system("sudo halt");
     
     return 0;
     

@@ -23,7 +23,7 @@ private:
     bool step_traverser_;  // Int used to control for loop
     
     int step_case_;
-    
+        
     std::thread* step_thread_;
     bool thread_started_;
     

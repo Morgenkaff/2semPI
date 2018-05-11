@@ -10,7 +10,7 @@ UrConn::UrConn(){
     
     // Inputs
     open_grip_ur_ = 9;
-    close_grip_ur_ = 10;
+    close_grip_ur_ = 11;
     
     // Output
     is_ready_ = 16;

@@ -9,21 +9,22 @@
  *  Might be usefull if the motor will be runned in seperate thread..
  */
 
-#include <iostream>
 #include <pigpio.h>
 #include "motor_ctrl.h"
 #include "dc.h"
 #include "stepper.h"
 
-MotorCtrl::MotorCtrl(bool& motor, bool& dir, int& speed){
+MotorCtrl::MotorCtrl(bool& motor){
     
-    // "End switches":
-    end_switch_ = 22;
-    gpioSetMode(end_switch_, PI_INPUT);
+    // Switch on gripper, that shorts to gnd when gripper is fully closed:
+    close_end_switch_ = 22;
+    gpioSetMode(close_end_switch_, PI_INPUT);
+    
+    // Switch on gripper, that shorts to gnd when gripper is fully open:
+    open_end_switch_ = 10;
+    gpioSetMode(open_end_switch_, PI_INPUT);
     
     // Constructing motor
-    direction_ = dir;
-    speed_ = speed;
     initMotor(motor);
     
 }
@@ -32,12 +33,14 @@ MotorCtrl::~MotorCtrl(){
     termMotor();
 }
 
-void MotorCtrl::start(){
-    motor_->run(speed_, direction_);
+void MotorCtrl::start(int& speed, bool& direction){
+    motor_->run(speed, direction);
+    is_running_ = 1;
 }
 
 void MotorCtrl::stop(){
     motor_->stop();
+    is_running_ = 0;
 }
 
 bool MotorCtrl::changeMotor(bool& b){
@@ -45,24 +48,19 @@ bool MotorCtrl::changeMotor(bool& b){
     initMotor(b);
 }
 
-void MotorCtrl::setSpeed(int i){
-    speed_ = i;
+bool MotorCtrl::isRunning(){
+    return is_running_;
 }
 
-int MotorCtrl::getSpeed(){
-    return speed_;
+bool MotorCtrl::getCloseEndSwitch() {
+    return !gpioRead(close_end_switch_); // Negated as switch short to gnd. (low "converted" to true)
 }
 
-void MotorCtrl::setDirection(bool b){
-    stop();
-    direction_ = b;
-    start();
+bool MotorCtrl::getOpenEndSwitch() {
+    return !gpioRead(open_end_switch_); // Negated as switch short to gnd. (low "converted" to true)
 }
 
-bool MotorCtrl::getDirection(){
-    return direction_;
-}
-
+// Privates:
 bool MotorCtrl::initMotor(bool& type){
     if (type){
         motor_ = new Stepper();
@@ -77,8 +75,4 @@ bool MotorCtrl::initMotor(bool& type){
     
 bool MotorCtrl::termMotor(){
     delete motor_;
-}
-
-bool MotorCtrl::getEndSwitch() {
-    return !gpioRead(end_switch_);
 }
