@@ -360,7 +360,7 @@ void PinCtrl::inputScanner(){
             // Changing state between working and standby
             //                         std::cout << "Standby switch"<< std::endl;
             input_ = 1;
-        } else if (hid->getOpenGrip() && motor_ctrl->getCloseEndSwitch()) {
+        } else if ((hid->getOpenGrip() || ur_conn->getOpenGrip()) && motor_ctrl->getCloseEndSwitch()) {
             // Open gripper when colsed/holding object (grip_sw pressed)
             //                         std::cout << "Grip full - opening"<< std::endl;
             input_ = 6;
