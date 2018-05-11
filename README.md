@@ -43,7 +43,8 @@ close_end_switch|22 23|blue_led
  
  The names are the same used for the vars used for the pin names in teh code.
  ('--' indicates that pin is not used/connected on hardware.)
- (step_# is used either by the stepper motor OR the dc motor. The dc only uses step_1 and step_2. Better names could be found..)
+ (step_# is used either by the stepper motor OR the dc motor. The dc only uses step_1 and step_2. 
+ Better names could be found..)
 </pre>
  
  ## TODO:
