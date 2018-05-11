@@ -37,9 +37,6 @@ public:
 private:
     void stepDriver();  // Should run in a loop ina seperate thread
                         // so its possible to change speed and such
-    void set_step(int&);
-    void stepTraverse();
-    void loopCase();
 };
 
 #endif // STEP_MOTOR_H

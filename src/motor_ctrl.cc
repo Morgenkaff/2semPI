@@ -43,9 +43,9 @@ void MotorCtrl::stop(){
     is_running_ = 0;
 }
 
-bool MotorCtrl::changeMotor(bool& b){
+void MotorCtrl::changeMotor(bool& type){
     termMotor();
-    initMotor(b);
+    initMotor(type);
 }
 
 bool MotorCtrl::isRunning(){
@@ -61,7 +61,7 @@ bool MotorCtrl::getOpenEndSwitch() {
 }
 
 // Privates:
-bool MotorCtrl::initMotor(bool& type){
+void MotorCtrl::initMotor(bool& type){
     if (type){
         motor_ = new Stepper();
         return 1;
@@ -73,6 +73,6 @@ bool MotorCtrl::initMotor(bool& type){
     }
 }
     
-bool MotorCtrl::termMotor(){
+void MotorCtrl::termMotor(){
     delete motor_;
 }

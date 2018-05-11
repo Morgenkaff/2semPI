@@ -14,19 +14,19 @@ int main()
 {
     cout << "PiGrip!" << endl;
     
-    
+private:
     // These vars should be defined and controllod in conjunction with OPC in future
-    bool motor_type = 1;
-    bool motor_dir = 0;
-    int motor_speed = 1; // 1 fast, 2 medium, 3 slow
+    bool default_motor_ = 1;
+    bool default_motor_dir_ = 0;
+    int default_motor_speed_ = 1; // 1 fast, 2 medium, 3 slow
     
-    
+    // Constructing the class controlling the GPIOs
     PinCtrl* pin_ctrl = new PinCtrl;
     
     // These function calls should be defined and controllod in conjunction with OPC in future
-    pin_ctrl->setMotorType(motor_type);
-    pin_ctrl->setMotorSpeed(motor_speed);
-    pin_ctrl->setMotorDirection(motor_dir);
+    pin_ctrl->setMotorType(default_motor_);
+    pin_ctrl->setMotorSpeed(default_motor_speed_);
+    pin_ctrl->setMotorDirection(default_motor_dir_);
     
     bool ready = pin_ctrl->init();
     
