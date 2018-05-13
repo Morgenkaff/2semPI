@@ -343,16 +343,16 @@ void PinCtrl::standby(){ // For problems(?) and motor change and such
     }
 }
 
-void PinCtrl::setMotorType(bool& b){ //
-    motor_type_ = b;
+void PinCtrl::setMotorType(bool& type){ //
+    motor_type_ = type;
 }
 
-void PinCtrl::setMotorSpeed(int i){
-    speed_ = i;
+void PinCtrl::setMotorSpeed(int speed){
+    speed_ = speed;
 }
 
-void PinCtrl::setMotorDirection(bool& b){
-    direction_ = b;
+void PinCtrl::setMotorDirection(bool& direction){
+    direction_ = direction;
 }
 // Scans for input from different classes AND differentiates between multiple buttons pressed etc
 // Going to get pretty messy. Clean up when inputs needed ios sorted out

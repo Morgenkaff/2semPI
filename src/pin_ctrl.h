@@ -57,11 +57,7 @@ public:
     
     void standby();
     
-    void reset(); // Resets all the pins to their default state.
-    
     bool terminate();
-    
-    void getInputs();
     
     void setMotorType(bool&); // (see motor_type_)
      

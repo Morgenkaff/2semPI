@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <help_text>// Uncomment the following line to change the fontsize and font:
+fontsize=12
+// fontfamily=SansSerif //possible: SansSerif,Serif,Monospaced
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Welcome to UMLet!
+//
+// Double-click on elements to add them to the diagram, or to copy them
+// Edit elements by modifying the text in this panel
+// Hold Ctrl to select multiple elements
+// Use Ctrl+mouse to select via lasso
+//
+// Use +/- or Ctrl+mouse wheel to zoom
+// Drag a whole relation at its central square icon
+//
+// Press Ctrl+C to copy the whole diagram to the system clipboard (then just paste it to, eg, Word)
+// Edit the files in the "palettes" directory to create your own element palettes
+//
+// Select "Custom Elements &gt; New..." to create new element types
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// This text will be stored with each diagram;  use it for notes.</help_text>
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>512</x>
+      <y>120</y>
+      <w>144</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Main
+--
+- default_motor_ : bool
+- default_motor_dir_ : bool
+- default_motor_speed_ : int</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>264</x>
+      <y>272</y>
+      <w>160</w>
+      <h>256</h>
+    </coordinates>
+    <panel_attributes>Hid
+--
+- kill_sw_ : int
+- open_grip_ : int
+- close_grip_ : int
+- top_side_ : int
+- bottom_side_ : int
+- green_led_ : int
+- red_led_ : int
+- blue_led_ : int
+- yellow_led_ : int
+--
++ setGreenLed(b : bool) : void
++ setRedLed(b : bool) : void
++ setOpenLed(b : bool) : void
++ setCloseLed(b : bool) : void
+
++ getKillSwitch() : bool
++ getOpenGrip() : bool
++ getCloseGrip() : bool
++ getTopSide() : bool
++ getBottomSide() : bool</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>272</y>
+      <w>216</w>
+      <h>272</h>
+    </coordinates>
+    <panel_attributes>PinCtrl
+--
+- scan_inputs_ : bool
+- scan_freq_ : int
+- input_ : int
+- motor_type_ : bool
+- speed_ : int
+- direction_ : bool
+- running_ : bool
+- run_state_ : int
+- in_working_loop_ : bool
+- in_standby_loop_ : bool
+--
++ init() : bool
++ run(state : int) : void
++ working() : void
++ standby() : void
++ terminate() : bool
+
++ setMotorType(type : bool) : void
++ setMotorSpeed(speed : int) : void
++ setMotorDirection(direction : bool) : void
+
+- inputScanner() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>792</x>
+      <y>272</y>
+      <w>168</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>MotorCtrl
+--
+- close_end_switch_ : int
+- open_end_switch_ : int
+--
++ start(speed : int, direction : bool) : void
++ stop() : void
++ changeMotor(type : bool) : void
++ isRunning() : bool
+
++ getCloseEndSwitch() : bool
++ getOpenEndSwitch() : bool
+
+- initMotor(type : bool) : void
+- termMotor() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>264</x>
+      <y>624</y>
+      <w>160</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>UrConn
+--
++ open_grip_ur_ : int
++ close_grip_ur_ : int
++ is_ready_ : int
+--
++ isReady(ready : bool) : void
++ getOpenGrip() : bool
++ getCloseGrip() : bool</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>672</x>
+      <y>592</y>
+      <w>192</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>DC
+--
+- run_open_ : int
+- run_close_ : int
+--
++ run(speed : int, direction : bool) : void
++ stop() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>888</x>
+      <y>536</y>
+      <w>208</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>Stepper
+--
+- step_1_ : int
+- step_2_ : int
+- step_3_ : int
+- step_4_ : int
+- step_speed_ : int
+- step_direction_ : bool
+- step_traverser_ : bool
+- step_case_ : int
+- step_thread : thread
+- thread_started_ : bool
+--
++ run(speed : int, direction : bool) : void
++ stop() : void
+
+- stepDriver() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>200</y>
+      <w>24</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>688</x>
+      <y>304</y>
+      <w>120</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>416</x>
+      <y>304</y>
+      <w>80</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>912</x>
+      <y>432</y>
+      <w>96</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0;100.0;70.0;100.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>800</x>
+      <y>776</y>
+      <w>112</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+Motor
+--
+/+ run(int, bool) : void /
+/+ stop() : void/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>760</x>
+      <y>664</y>
+      <w>56</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;200.0;10.0;200.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>904</x>
+      <y>728</y>
+      <w>104</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;120.0;110.0;120.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>760</x>
+      <y>432</y>
+      <w>88</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>90.0;10.0;90.0;70.0;10.0;70.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>416</x>
+      <y>536</y>
+      <w>176</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>200.0;10.0;200.0;160.0;10.0;160.0</additional_attributes>
+  </element>
+</diagram>

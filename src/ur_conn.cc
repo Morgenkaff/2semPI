@@ -46,9 +46,9 @@ UrConn::~UrConn() {
     
 }
 
-void UrConn::isReady(bool b){
+void UrConn::isReady(bool ready){
           //  std::cout << "send ready" << b<< std::endl;
-    gpioWrite(is_ready_, b);
+    gpioWrite(is_ready_, ready);
 }
 
 bool UrConn::getOpenGrip(){

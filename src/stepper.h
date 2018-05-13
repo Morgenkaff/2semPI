@@ -41,11 +41,16 @@ public:
     int getTotaltSteps();  // Returns the total amount of steps the motor has taken since class constructed
     
 private:
+<<<<<<< HEAD
     void stepDriver();     // Should run in a loop ina seperate thread
                            // so its possible to change speed and such
     void set_step(int&);
     void stepTraverse();
     void loopCase();
+=======
+    void stepDriver();  // Should run in a loop ina seperate thread
+                        // so its possible to change speed and such
+>>>>>>> 37a593ae0387b6d11f8d26c9645415af5effafea
 };
 
 #endif // STEP_MOTOR_H
