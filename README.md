@@ -5,7 +5,7 @@
  Compile with:
  
  <code>
- g++ src/*.cc -lpigpio -lrt -lpthread
+ g++ src/*.cc -lpigpio -lrt -lpthread -o grip-control
  </code>
  
  -lpigpio is for the pigpio library, used for the GPIOs (http://abyz.me.uk/rpi/pigpio).

@@ -32,6 +32,9 @@ Stepper::Stepper(){
     thread_started_ = 0;
     // std::cout << "Stepper motor initiated" << std::endl;
     
+    this_run_steps_ = 0;
+    total_steps_ = 0;
+    
 }
 
 void Stepper::run(int& i, bool& b) {
@@ -40,6 +43,7 @@ void Stepper::run(int& i, bool& b) {
     step_direction_ = b;
     
     step_traverser_ = 1;
+    this_run_steps_ = 0;
     
     step_thread_ = new std::thread(&Stepper::stepDriver,this);
     thread_started_ = 1;
@@ -52,7 +56,6 @@ void Stepper::stop(){
     
     step_traverser_ = 0;
     //_USE JOINABLE INSTEAD?_
-//     std::cout << step_thread_->joinable() << std::endl;
     if (thread_started_){ // Checks if step_thread is started (if the motor is running) 
         step_thread_->join();
     }
@@ -66,6 +69,11 @@ void Stepper::stop(){
     
 //     std::cout << "stepper stopped" << std::endl;
     thread_started_ = 0;
+    
+    total_steps_ += this_run_steps_;
+
+    //std::cout << "Total steps taken since start: " << this_run_steps_ << std::endl;
+    //std::cout << "Total steps taken since constructed: " << total_steps_ << std::endl;
     
 }
 
@@ -135,5 +143,6 @@ void Stepper::stepDriver(){
         if(step_case_>7){step_case_=0;}
         if(step_case_<0){step_case_=7;}
         gpioDelay(200+(step_speed_*400)); // 400+(step_speed_*200)
+        ++ this_run_steps_;
     }
 }

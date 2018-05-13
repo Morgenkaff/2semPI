@@ -20,9 +20,12 @@ private:
                           // preferred speed
     bool step_direction_; // Used to multiply with step_traverser_ for direction
                           // Should be set as 1 or -1
-    bool step_traverser_;  // Int used to control for loop
+    bool step_traverser_; // Int used to control for loop
     
-    int step_case_;
+    int step_case_;       // Used to set case in the case switch (used to drive stepper)
+    
+    int this_run_steps_;  // Hold the amount of steps taken since last stop
+    long total_steps_;    // The total amount of steps since class constructed
         
     std::thread* step_thread_;
     bool thread_started_;
@@ -34,9 +37,12 @@ public:
     
     void stop(); // Stops the motor by setting all used pins to 0 (low)
     
+    int getThisRunSteps(); // Returns the total amount of steps taken since motors last stop
+    int getTotaltSteps();  // Returns the total amount of steps the motor has taken since class constructed
+    
 private:
-    void stepDriver();  // Should run in a loop ina seperate thread
-                        // so its possible to change speed and such
+    void stepDriver();     // Should run in a loop ina seperate thread
+                           // so its possible to change speed and such
     void set_step(int&);
     void stepTraverse();
     void loopCase();

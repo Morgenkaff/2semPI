@@ -101,9 +101,11 @@ void PinCtrl::working(){ //When motor is set and all
             }
         } else if (input_ == 2) { // Close gripper (direction = 0)
             
-            // Checks if other direction set or motor not running
-            // Button works as "start" besides set/change direction.
-            // And should only call the motor once.
+            // The inputs to open/close the gripper works as a "start" signal AND change direction.
+            // Thus, depending on wether the motor is running, wich direction is set etc
+            // different actions is taken.
+            
+            // Checks if other direction set and motor running (change direction)
             if (direction_ != 0 || !motor_ctrl->isRunning()) {
                 direction_ = 0;
                 ur_conn->isReady(0); // not ready when motor is running
@@ -115,25 +117,36 @@ void PinCtrl::working(){ //When motor is set and all
             
         } else if (input_ == 3) { // Open empty gripper (direction = 1)
             
-            // Opening the gripper can be done in 2 ways:
-            // 1 If the gripper holds an object, to release it.
-            // 2 If the gripper doesn't hold an object, to open fully.
-            // Nr 2 is done here, nr 1 is next if-statement
+            /*
+            Opening the gripper can be done in 2 ways:
+            1 If the gripper doesn't hold an object, to open fully. (input_ == 3)
+            2 If the gripper holds an object, to open slightly, thus releasing the object. (input_ == 6)
+            Nr 1 is done here, nr 2 is next else if-statement (l )
+            */
+
+            // The inputs to open/close the gripper works as a "start" signal AND change direction.
+            // Thus, depending on wether the motor is running, wich direction is set etc
+            // different actions is taken.
             
-            // Checks if other direction set or motor not running
-            // Button works as "start" besides set/change direction.
-            // And should only call the motor once.
-            if (direction_ != 1 || !motor_ctrl->isRunning()) {
-                direction_ = 1;
-                ur_conn->isReady(0); // not ready when motor is running 
-                hid->setOpenLed(1);
-                hid->setCloseLed(0);
-                motor_ctrl->stop();
-                motor_ctrl->start(speed_, direction_);
+            // Checks if other direction set and motor running (change direction)
+            if (direction_ == 0 && motor_ctrl->isRunning()) {
+                ur_conn->isReady(0);    // not ready when "undergoing" action
+                motor_ctrl->stop();     // Stops the running motor
+                direction_ = 1;         // Change the direction to open (1)
+                hid->setCloseLed(0);    // Turn off the "closing led" (yellow)
+                hid->setOpenLed(1);     // Turn on the "opening led" (blue)
+                motor_ctrl->start(speed_, direction_); // Starts the motor in the new direction
+                                                       // with previosly set speed
+            } else if (!motor_ctrl->isRunning()) {
+                ur_conn->isReady(0);    // not ready when "undergoing" action
+                direction_ = 1;         // Change the direction to open (1)
+                hid->setCloseLed(0);    // Turn off the "closing led" (yellow)
+                hid->setOpenLed(1);     // Turn on the "opening led" (blue)
+                motor_ctrl->start(speed_, direction_); // Starts the motor in the new direction
+                                                       // with previosly set speed
             }
             
-            
-        } else if (input_ == 6){
+        } else if (input_ == 6){ // Open "full" gripper (direction = 1)
             
             // This if-statement reacts to the gripper is holding an object and set to open.
             // Its starting openening the gripper. Running a while loop until the switch on gripper 
@@ -164,14 +177,14 @@ void PinCtrl::working(){ //When motor is set and all
                 if (direction_ == 0 && motor_ctrl->isRunning()) { // Only send the stop command if closing
                     hid->setCloseLed(0);
                     motor_ctrl->stop();
-                    gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
+                    // gpioDelay(500000); // Delays for 0,5 second before signallilng "ready" - not necessary
                     ur_conn->isReady(1); 
                 }
         } else if (input_ == 8) { // Stops the opening of gripper by gripper_switch
                 if (direction_ == 1 && motor_ctrl->isRunning()) { // Only send the stop command if opening
                     hid->setOpenLed(0);
                     motor_ctrl->stop();
-                    gpioDelay(500000); // Delays for 0,5 second before signallilng "ready"
+                    // gpioDelay(500000); // Delays for 0,5 second before signallilng "ready" - not necessary
                     ur_conn->isReady(1); 
                 }
         } else {
