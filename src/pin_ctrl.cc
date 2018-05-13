@@ -157,11 +157,8 @@ void PinCtrl::working(){ //When motor is set and all
             hid->setCloseLed(0);
             motor_ctrl->stop();
             motor_ctrl->start(speed_, direction_);
-            
-            do {
-                gpioSleep(PI_TIME_RELATIVE, 2, 0);
-            } while (input_ == 5 || input_ == 6);
-            
+            gpioSleep(PI_TIME_RELATIVE, 1, 200000); // all this timing could be moved to motor_ctrl
+                                                    // as in seperate releaseOpen and fullOpen functions eg.
             motor_ctrl->stop();
             hid->setOpenLed(0);
             
@@ -173,14 +170,15 @@ void PinCtrl::working(){ //When motor is set and all
                 motor_ctrl->stop();
             }
             
-        } else if (input_ == 5) { // Stops the closing of gripper by gripper_switch
+        } else if (input_ == 5) { // Stops the closing of gripper by gripper_switch - could be moved to motor_ctrl ?
                 if (direction_ == 0 && motor_ctrl->isRunning()) { // Only send the stop command if closing
                     hid->setCloseLed(0);
+                    gpioDelay(200000); // Delays for 0,2s. Making the gripper tighten a little.
                     motor_ctrl->stop();
                     // gpioDelay(500000); // Delays for 0,5 second before signallilng "ready" - not necessary
                     ur_conn->isReady(1); 
                 }
-        } else if (input_ == 8) { // Stops the opening of gripper by gripper_switch
+        } else if (input_ == 8) { // Stops the opening of gripper by gripper_switch - could be moved to motor_ctrl ?
                 if (direction_ == 1 && motor_ctrl->isRunning()) { // Only send the stop command if opening
                     hid->setOpenLed(0);
                     motor_ctrl->stop();

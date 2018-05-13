@@ -27,7 +27,7 @@ public:
     void start(int&, bool&); // Starts the motor
     void stop(); // Stops the motor
     
-    bool changeMotor(bool&); // Changes the motor type (see motor_type_)
+    void changeMotor(bool&); // Changes the motor type (see motor_type_)
     
     bool isRunning(); // returns true if motor is running½
     
@@ -37,9 +37,9 @@ public:
     
 private:
     
-    bool initMotor(bool&); // Constructs (and if a motor exist destructs it before constructing new).
+    void initMotor(bool&); // Constructs (and if a motor exist destructs it before constructing new).
                            // bool determines motor type (see motor_type_)
-    bool termMotor();
+    void termMotor();
     
     
 };

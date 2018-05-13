@@ -64,12 +64,9 @@ bool MotorCtrl::getOpenEndSwitch() {
 void MotorCtrl::initMotor(bool& type){
     if (type){
         motor_ = new Stepper();
-        return 1;
     } else if (!type) {
         motor_ = new Dc();
-        return 1;
     } else {
-        return 0;
     }
 }
     

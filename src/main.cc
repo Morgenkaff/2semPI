@@ -14,7 +14,6 @@ int main()
 {
     cout << "PiGrip!" << endl;
     
-private:
     // These vars should be defined and controllod in conjunction with OPC in future
     bool default_motor_ = 1;
     bool default_motor_dir_ = 0;
@@ -41,7 +40,7 @@ private:
     
     delete pin_ctrl;
     
-    cout << "pin_ctrl deleted" << endl;
+    // cout << "pin_ctrl deleted" << endl;
     
     //system("sudo halt");
     
