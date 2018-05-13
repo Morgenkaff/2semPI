@@ -16,6 +16,11 @@ private:
     
     bool run_standby_blink_;
     void standbyBlink(bool); // bool: 1=start 0=stop
+                           // True = on, false = off
+                           
+    int rate_balance_; // Used to tune the rate of the blinking of the LEDs
+    
+    bool standbyBlinkStop_;
     
     
     void blinkBiLed(int, int); // Blinks between green and red led.
@@ -24,29 +29,9 @@ private:
                                // 1. int is rate (see above), 2. int is duration in s
     
     
-    
-public:
-    Pin_step(); // Simple constructor. Nothing happens
-    
-    Pin_step(bool direction, int speed); // Constructiong and setting the speed and direction at once
-        // Speed is sat by value from 0-255
-        
-    void setSpeed(int); // Stets the speed for the motor by value from 0-255
-    int getSpeed(); // Stets the speed for the motor by value from 0-255
-    void setDirection(bool); // Sets the direction of the motor
-    bool getDirection(); // Sets the direction of the motor
-    
-private:
-    void _runStepper(int, bool); // Should run in a loop ina seperate thread
-                        // so its possible to change speed and such
-    void _set_step(int&);
-    void _stepTraverse();
-    void _loopCase();
 };
-                           // True = on, false = off
-    int rate_balance_; // Used to tune the rate of the blinking of the LEDs
-    
-    bool standbyBlinkStop_;
+
+#endif // BLINK_LED_H
 
 
 void Hid::blinkLed(int led, int rate, int duration){
@@ -90,5 +75,3 @@ void Hid::blinkBiLed(int rate, int duration){
         gpioSleep(PI_TIME_RELATIVE, 0, balance*1000);
     }
 }
-
-#endif // BLINK_LED_H
