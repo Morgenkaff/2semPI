@@ -141,9 +141,9 @@ fontsize=12
     </coordinates>
     <panel_attributes>UrConn
 --
-+ open_grip_ur_ : int
-+ close_grip_ur_ : int
-+ is_ready_ : int
+- open_grip_ur_ : int
+- close_grip_ur_ : int
+- is_ready_ : int
 --
 + isReady(ready : bool) : void
 + getOpenGrip() : bool
