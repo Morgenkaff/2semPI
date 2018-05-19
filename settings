@@ -1,0 +1,9 @@
+# Uncomment lines with '#'
+
+# Set motor type
+# 1 for stepper, 0 for dc
+type = 1
+
+# Set motor speed
+# 1 fast, 2 medium, 3 slow
+speed = 1

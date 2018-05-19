@@ -1,7 +1,7 @@
 #ifndef HID_H
 #define HID_H
 
-#include <pigpio.h> // Library used to connect to the gpios
+//#include <pigpio.h> // Library used to connect to the gpios
 
 class Hid {
 private: // Private vars
@@ -48,8 +48,6 @@ public: // Public functions (+constructor)
                           // If pressed = 1, if not pressed = 0
     
     // FUNCTION WISH LIST:
-    
-    
     
 private: // Private functions
 };

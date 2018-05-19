@@ -5,16 +5,23 @@
 #include <pigpio.h> // Library used to connect to the gpios
 #include <thread> // Used to run hid in seperate thread.
 #include <iostream> // For debuggin
+#include <ctime> // Used to get time for timer();
 
 #include "pin_ctrl.h" // Own header file
 
 PinCtrl::PinCtrl(){
+    
+    //Vars used for logging - should be availible while object exists
+    total_runtime_ = 0;
+    runtime_start_time_ = 0;
+    runtime_stop_time_ = 0;
+    total_opens_ = 0;
+    total_closes_ = 0;
+    
 }
 
 PinCtrl::~PinCtrl(){
-    //gpioTerminate();
-    terminate();        
-    //     std::cout << "GPIOs terminated" << std::endl;
+    terminate();
 }
 
 bool PinCtrl::init(){
@@ -35,8 +42,10 @@ bool PinCtrl::init(){
         return 1;
         
     } else {
+        
         return 0;
     }
+    
 }
 
 bool PinCtrl::terminate(){
@@ -77,6 +86,8 @@ void PinCtrl::run(int state){
     
 }
 
+// Clean up and set in seperate functions:
+
 void PinCtrl::working(){ //When motor is set and all
     
     in_working_loop_ = 1;
@@ -89,6 +100,7 @@ void PinCtrl::working(){ //When motor is set and all
             hid->setRedLed(1);
             gpioSleep(PI_TIME_RELATIVE, 3, 0);
             if (input_ == 1){
+                timer(0); // Stops the "run timer"
                 motor_ctrl->stop();
                 hid->setRedLed(0);
                 hid->setCloseLed(0);
@@ -99,13 +111,14 @@ void PinCtrl::working(){ //When motor is set and all
             } else {
                 hid->setGreenLed(1);
             }
+            
         } else if (input_ == 2) { // Close gripper (direction = 0)
             
             // The inputs to open/close the gripper works as a "start" signal AND change direction.
             // Thus, depending on wether the motor is running, wich direction is set etc
             // different actions is taken.
             
-            // Checks if other direction set and motor running (change direction)
+            // Checks if other direction set (change direction) or motor is not running (start)
             if (direction_ != 0 || !motor_ctrl->isRunning()) {
                 direction_ = 0;
                 ur_conn->isReady(0); // not ready when motor is running
@@ -113,6 +126,8 @@ void PinCtrl::working(){ //When motor is set and all
                 hid->setCloseLed(1);
                 motor_ctrl->stop();
                 motor_ctrl->start(speed_, direction_);
+                timer(1); // Starts the "run timer"
+                total_closes_ ++; // Adds 1 to the amount of close-commands
             }        
             
         } else if (input_ == 3) { // Open empty gripper (direction = 1)
@@ -137,6 +152,9 @@ void PinCtrl::working(){ //When motor is set and all
                 hid->setOpenLed(1);     // Turn on the "opening led" (blue)
                 motor_ctrl->start(speed_, direction_); // Starts the motor in the new direction
                                                        // with previosly set speed
+                timer(1); // Starts the "run timer"
+                total_opens_ ++; // Adds 1 to the amount of open-commands
+                
             } else if (!motor_ctrl->isRunning()) {
                 ur_conn->isReady(0);    // not ready when "undergoing" action
                 direction_ = 1;         // Change the direction to open (1)
@@ -144,9 +162,11 @@ void PinCtrl::working(){ //When motor is set and all
                 hid->setOpenLed(1);     // Turn on the "opening led" (blue)
                 motor_ctrl->start(speed_, direction_); // Starts the motor in the new direction
                                                        // with previosly set speed
+                timer(1); // Starts the "run timer"
+                total_opens_ ++; // Adds 1 to the amount of open-commands
             }
             
-        } else if (input_ == 6){ // Open "full" gripper (direction = 1)
+        } else if (input_ == 6){ // Open gripper with object (direction = 1)
             
             // This if-statement reacts to the gripper is holding an object and set to open.
             // Its starting openening the gripper. Running a while loop until the switch on gripper 
@@ -155,36 +175,44 @@ void PinCtrl::working(){ //When motor is set and all
             ur_conn->isReady(0); // not ready when motor is running 
             hid->setOpenLed(1);
             hid->setCloseLed(0);
+            timer(0); // Starts the "run timer"
             motor_ctrl->stop();
             motor_ctrl->start(speed_, direction_);
-            gpioSleep(PI_TIME_RELATIVE, 1, 200000); // all this timing could be moved to motor_ctrl
+            timer(1); // Starts the "run timer"
+            gpioSleep(PI_TIME_RELATIVE, 1, 500000); // all this timing could be moved to motor_ctrl
                                                     // as in seperate releaseOpen and fullOpen functions eg.
+            timer(0); // Starts the "run timer"
             motor_ctrl->stop();
             hid->setOpenLed(0);
-            
+            total_opens_ ++; // Adds 1 to the amount of open-commands
             
         } else if (input_ == 4) { // Stopping the motor
             if (motor_ctrl->isRunning()) {
                 hid->setCloseLed(0);
                 hid->setOpenLed(0);
+                timer(0); // Stops the "run timer"
                 motor_ctrl->stop();
             }
             
         } else if (input_ == 5) { // Stops the closing of gripper by gripper_switch - could be moved to motor_ctrl ?
                 if (direction_ == 0 && motor_ctrl->isRunning()) { // Only send the stop command if closing
                     hid->setCloseLed(0);
-                    gpioDelay(200000); // Delays for 0,2s. Making the gripper tighten a little.
+                    gpioSleep(PI_TIME_RELATIVE, 1, 500000); // Delays for 1,5s. Making the gripper tighten a little.
+                    timer(0); // Stops the "run timer"
                     motor_ctrl->stop();
                     // gpioDelay(500000); // Delays for 0,5 second before signallilng "ready" - not necessary
                     ur_conn->isReady(1); 
                 }
+                
         } else if (input_ == 8) { // Stops the opening of gripper by gripper_switch - could be moved to motor_ctrl ?
                 if (direction_ == 1 && motor_ctrl->isRunning()) { // Only send the stop command if opening
                     hid->setOpenLed(0);
+                    timer(0); // Stops the "run timer"
                     motor_ctrl->stop();
                     // gpioDelay(500000); // Delays for 0,5 second before signallilng "ready" - not necessary
                     ur_conn->isReady(1); 
                 }
+                
         } else {
             // Do nothing
         }
@@ -349,9 +377,26 @@ void PinCtrl::setMotorSpeed(int speed){
     speed_ = speed;
 }
 
-void PinCtrl::setMotorDirection(bool& direction){
-    direction_ = direction;
+long int PinCtrl::getMotorRuntime(){
+    
+    return total_runtime_;
+    
 }
+    
+int PinCtrl::getMotorOpens(){
+    
+    return total_opens_;
+    
+}
+    
+int PinCtrl::getMotorCloses(){
+    
+    return total_closes_;
+    
+}
+
+// private functions:
+
 // Scans for input from different classes AND differentiates between multiple buttons pressed etc
 // Going to get pretty messy. Clean up when inputs needed ios sorted out
 // (Highest amount of simultanious buttons first, and highest priority (grip_sw))
@@ -401,4 +446,29 @@ void PinCtrl::inputScanner(){
         
         gpioSleep(PI_TIME_RELATIVE, 0, 10000); // gpioSleep, takes uS as parameter
     }
+}
+
+void PinCtrl::timer(bool b){
+    
+    switch (b){
+        case 1:
+            runtime_start_time_ = static_cast<long int>(std::time(nullptr));
+            // std::cout << "runtime start: " << runtime_start_time_ << std::endl;
+            break;
+        case 0:
+            if (motor_ctrl->isRunning()){ // Only change if motor is running
+                                          // (call should be placed just before "motor_ctrl->stop()")
+                
+                runtime_stop_time_ = static_cast<long int>(std::time(nullptr));
+                // std::cout << "runtime stop: " << runtime_stop_time_ << std::endl;
+            
+                long int time_diff = runtime_stop_time_ - runtime_start_time_;
+                // std::cout << "Time difference: " << time_diff << std::endl;
+            
+                total_runtime_ += time_diff;
+                // std::cout << "runtime total: " << total_runtime_ << std::endl;
+            }
+            break;
+    }
+    
 }

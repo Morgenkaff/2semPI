@@ -142,7 +142,7 @@ void Stepper::stepDriver(){
         if(step_direction_==1){ step_case_--;}
         if(step_case_>7){step_case_=0;}
         if(step_case_<0){step_case_=7;}
-        gpioDelay(200+(step_speed_*400)); // 400+(step_speed_*200)
+        gpioDelay(300+(step_speed_*400)); // 400+(step_speed_*200)
         ++ this_run_steps_;
     }
 }

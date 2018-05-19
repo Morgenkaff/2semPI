@@ -27,7 +27,7 @@ private:
     
     bool motor_type_;   // Bool: 1 = stepper, 0 = dc.
                         // Could be changed to eg int, if we get more than 2 motor types
-    int speed_;         // Speed is set in a range of 1 - 3 (1 is slowest 5 is fastest)
+    int speed_;         // Speed is set in a range of 1 - 3 (1 is fastes 3 is slowest)
     bool direction_;    // 1 is closing, 0 is opening
     
     
@@ -44,6 +44,13 @@ private:
     
     //Vars for standby loop:
     bool in_standby_loop_;
+    
+    //Vars used for logging
+    long int total_runtime_; // Stores total run time for motor, in seconds, since program start
+    long int runtime_start_time_; // Used to store seconds since epoch at motor-start
+    long int runtime_stop_time_; // Used to store seconds since epoch at motor-stop
+    int total_opens_; // Amount of times the open command have been called
+    int total_closes_; // Amount of times the close command have been called
     
 public:
     PinCtrl(); // Simple constructor. Nothing happens
@@ -63,13 +70,18 @@ public:
      
     void setMotorSpeed(int); // (see speed_)
     
-    void setMotorDirection(bool&); // (see direction_)
+    long int getMotorRuntime(); // Returns total time motor have run, in seconds, since program start
     
+    int getMotorOpens(); // Returns amount of times the open command have been called
     
+    int getMotorCloses(); // Returns amount of times the close command have been called
     
 private:
     
     void inputScanner();
+    
+    void timer(bool); // Used to time run time for motor
+                      // char: s=start, e=end
     
 };
 
