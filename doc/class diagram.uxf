@@ -37,7 +37,9 @@ fontsize=12
 --
 - default_motor_ : bool
 - default_motor_dir_ : bool
-- default_motor_speed_ : int</panel_attributes>
+- default_motor_speed_ : int
+--
++ readSettings() : bool</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
