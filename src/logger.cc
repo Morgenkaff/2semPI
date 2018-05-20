@@ -33,6 +33,13 @@ Logger::Logger() {
         //std::cout << "Do nothing" << std::endl;
     }
     
+    //Vars used for logging - sat to 0 when logger gets constructed
+    total_runtime_ = 0;
+    runtime_start_time_ = 0;
+    runtime_stop_time_ = 0;
+    total_opens_ = 0;
+    total_closes_ = 0;
+    
 }
 
 bool Logger::log(char c, std::string str) {

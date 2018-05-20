@@ -45,13 +45,6 @@ private:
     //Vars for standby loop:
     bool in_standby_loop_;
     
-    //Vars used for logging
-    long int total_runtime_; // Stores total run time for motor, in seconds, since program start
-    long int runtime_start_time_; // Used to store seconds since epoch at motor-start
-    long int runtime_stop_time_; // Used to store seconds since epoch at motor-stop
-    int total_opens_; // Amount of times the open command have been called
-    int total_closes_; // Amount of times the close command have been called
-    
 public:
     PinCtrl(); // Simple constructor. Nothing happens
     ~PinCtrl();
@@ -79,9 +72,6 @@ public:
 private:
     
     void inputScanner();
-    
-    void timer(bool); // Used to time run time for motor
-                      // char: s=start, e=end
     
 };
 

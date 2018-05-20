@@ -18,7 +18,7 @@ int main()
 {    
     
     //Logger log; //log(*print (p), file (f) or both (b) : char, *String to log* : string);
-    log.log('b', "Grip-control started!");
+    log.log('b', "Grip-control started.");
 
     
     //bool settings_read = readSettings();
@@ -28,9 +28,19 @@ int main()
         log.log('b', "Unable to read settings file");
         
         // If values could not be read, they are sat to 0
-        bool default_motor_ = 0; // 1 = stepper, 0 = dc
-        int default_motor_speed_ = 0; // 1 fast, 2 medium, 3 slow
+        bool default_motor_ = 1; // 1 = stepper, 0 = dc
+        int default_motor_speed_ = 2; // 1 fast, 2 medium, 3 slow
+        log.log('b', "Motor type sat to: stepper");
+        log.log('b', "Motor speed sat to: 2");
+    } else {
         
+        log.log('b', "Settings read from settings file.");
+        if (default_motor_ == 1){
+            log.log('b', "Motor type sat to: stepper");
+        } else if (default_motor_ == 0){
+            log.log('b', "Motor type sat to: dc");
+        }
+        log.log('b', ("Motor speed sat to: "+std::to_string(default_motor_speed_)));
     }
             
     // Constructing the class controlling the GPIOs
@@ -48,6 +58,9 @@ int main()
         log.log('b', "Unable to initialize pigpio library.");
         
         exit(1);
+    } else {
+        
+        log.log('b', "Pigpio library initialized.");
     }
     
         

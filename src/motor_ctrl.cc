@@ -34,11 +34,30 @@ MotorCtrl::~MotorCtrl(){
 }
 
 void MotorCtrl::start(int& speed, bool& direction){
-    motor_->run(speed, direction);
-    is_running_ = 1;
+    if (!is_running_){ // Motor not running
+        motor_->run(speed, direction); // Starts in set direction
+        is_running_ = 1;
+    } else if (is_running_ && direction_ == direction){  // is running in set direction
+        // Do nothing
+    } else if (is_running_ && direction_ != direction) { // is running in opp. direction
+        motor_->stop(); // Stops the motor, to prevent possible complications with conflicting signals
+        motor_->run(speed, direction); // Starts (again) in new set direction
+        is_running_ = 1;
+    }
 }
 
 void MotorCtrl::stop(){
+    
+    if (is_running_) { // Only send stop command if motor is running
+        motor_->stop();
+        is_running_ = 0;
+    }
+}
+
+void MotorCtrl::releaseObject(int& speed, bool& direction){
+    motor_->run(speed, direction); // direction is used here too, (if pin_ctrl should change something)
+    is_running_ = 1;
+    gpioSleep(PI_TIME_RELATIVE, 1, 500000);
     motor_->stop();
     is_running_ = 0;
 }
