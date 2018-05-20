@@ -28,12 +28,12 @@ void Timer::start(){
     
 }
 
-long int Timer::stop(){
+int Timer::stop(){
     
     runtime_stop_time_ = static_cast<long int>(std::time(nullptr));
     // std::cout << "runtime stop: " << runtime_stop_time_ << std::endl;
     
-    long int time_diff = runtime_stop_time_ - runtime_start_time_;
+    int time_diff = runtime_stop_time_ - runtime_start_time_;
     // std::cout << "Time difference: " << time_diff << std::endl;
     
     total_runtime_ += time_diff;

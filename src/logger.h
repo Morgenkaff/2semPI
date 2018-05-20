@@ -10,18 +10,24 @@
 #define LOGGER_H
 
 #include <iostream>
+#include <string>
+#include "timer.h"
 
 class Logger {
+
+private:
+    
+    char dest_; // Used to set destination for log ('p'rint (screen), 'f'ile, 'b'oth)
+    std::string file_name_;
+    
 public:
     
-    Logger();
+    Logger(char); // If only a char is given (for print, or by error)
     
-    bool log(char, std::string); // char: 'p'rint, 'f'ile, 'b'oth. 
-                            // string: string to print
+    Logger(char, std::string); // Char sets destination ('p'rint (screen), 'f'ile, 'b'oth)
+                          // string sets name of log-file
     
-    //Vars used for logging of motor
-    int total_opens_; // Amount of times the open command have been called
-    int total_closes_; // Amount of times the close command have been called
+    bool write(std::string);  // string: string to print
     
 private:
     

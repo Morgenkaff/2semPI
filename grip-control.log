@@ -1,0 +1,7 @@
+21-05-2018 01:36:18: Grip-control started.
+21-05-2018 01:36:18: Settings read from settings file.
+21-05-2018 01:36:18: Motor type sat to: stepper
+21-05-2018 01:36:18: Motor speed sat to: 1
+21-05-2018 01:36:19: Pigpio library initialized.
+21-05-2018 01:36:56: Pigpio have been terminated.
+21-05-2018 01:36:56: Runtime of grip-control: 0:0:38

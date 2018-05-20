@@ -1,0 +1,10 @@
+21-05-2018 01:36:19: Motor initialized
+21-05-2018 01:36:55:                              
+21-05-2018 01:36:55:   Terminating motor, stats:  
+21-05-2018 01:36:55: -----------------------------
+21-05-2018 01:36:55: Motor type: stepper motor
+21-05-2018 01:36:55: Total starts of motor: 4
+21-05-2018 01:36:55: Total stops of motor: 4
+21-05-2018 01:36:55: Total releases by motor: 2
+21-05-2018 01:36:55: Total runtime of motor: 48
+21-05-2018 01:36:55: -----------------------------

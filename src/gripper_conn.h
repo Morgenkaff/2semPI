@@ -1,29 +1,40 @@
-#ifndef MOTOR_CTRL_H
-#define MOTOR_CTRL_H
+#ifndef GRIPPER_CONN_H
+#define GRIPPER_CONN_H
 
 #include "motor.h"
+#include "logger.h"
+#include "timer.h"
 
-
-class MotorCtrl {
+class GripperConn {
 private:
     
-    Motor* motor_; // Pointer to a motor class. Used to changing motor types etc.
+    Logger* log;
+    Timer* timer;
+    
+    Motor* motor; // Pointer to a motor class. Used to changing motor types etc.
     
     bool is_running_; // Var used to store if motor is running
     bool direction_;  // store current direction sat
+    bool motor_type_; // Stores motor type
     
     // Vars used to control GPIOs for the "end switches"
     int close_end_switch_;
     int open_end_switch_;
     
+    // Vars used for logging:
+    int total_runtime_;
+    int total_starts_;
+    int total_stops_;
+    int total_releases_;
+    
 public:
     
-    MotorCtrl() = delete; // Default constructor should not be used.
+    GripperConn() = delete; // Default constructor should not be used.
     
-    MotorCtrl(bool&); // Constructiong and setting the motor type, speed and direction at once
+    GripperConn(bool&); // Constructiong and setting the motor type, speed and direction at once
                       // 1. bool is type (see motor_type_) int is speed (see speed_)
     
-    ~MotorCtrl();
+    ~GripperConn();
 
     void start(int&, bool&); // Starts the motor
                              // If motor is allready running in set direction it does nothing
@@ -49,4 +60,4 @@ private:
     
 };
 
-#endif // MOTOR_CTRL_H
+#endif // GRIPPER_CONN_H

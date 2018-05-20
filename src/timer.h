@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-class Logger {
+class Timer {
 private:
     
     //Vars used for timer
@@ -25,7 +25,7 @@ public:
     Timer();
     
     void start(); // Used to start the timer
-    long int stop(); // Used to stop the timer, and return the duration
+    int stop(); // Used to stop the timer, and return the duration
     
 private:
     

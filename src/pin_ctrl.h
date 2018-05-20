@@ -3,18 +3,20 @@
 
 #include "hid.h" // headerfile for the HID
 #include "ur_conn.h" // headerfile for the class connecting with UR
-#include "motor_ctrl.h" // Headerfile for the motor control class
+#include "gripper_conn.h" // Headerfile for the motor control class
 #include <thread>
 
 
 class PinCtrl {
 private:
     
+    Logger* log; // Used for debuggin
+    
     Hid* hid; // Pointer used for constructing the hid class on the stack.
     
     UrConn* ur_conn; // Pointer used for constructing the UrConn class
     
-    MotorCtrl* motor_ctrl; // Pointer to the motor control class
+    GripperConn* gripper_conn; // Pointer to the motor control class
     
     std::thread* input_scan_thread;
     
@@ -45,6 +47,9 @@ private:
     //Vars for standby loop:
     bool in_standby_loop_;
     
+    // True if termination functioin have been run
+    bool terminated_;
+    
 public:
     PinCtrl(); // Simple constructor. Nothing happens
     ~PinCtrl();
@@ -57,17 +62,11 @@ public:
     
     void standby();
     
-    bool terminate();
+    void terminate();
     
     void setMotorType(bool&); // (see motor_type_)
      
     void setMotorSpeed(int); // (see speed_)
-    
-    long int getMotorRuntime(); // Returns total time motor have run, in seconds, since program start
-    
-    int getMotorOpens(); // Returns amount of times the open command have been called
-    
-    int getMotorCloses(); // Returns amount of times the close command have been called
     
 private:
     
